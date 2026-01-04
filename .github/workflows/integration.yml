@@ -255,7 +255,7 @@ jobs:
       - uses: davelosert/vitest-coverage-report-action@v2
         name: Report code coverage to pull request
         with:
-          vite-config-path: folder/coverage/vitest.config.ts
+          vite-config-path: folder/vitest.config.ts
           file-coverage-mode: changes-affected
           json-summary-path: folder/coverage/coverage-summary.json
           json-final-path: folder/coverage/coverage-final.json
@@ -265,7 +265,7 @@ jobs:
         name: Publish Test Report
         if: always()
         with:
-          report_paths: coverage/junit.xml
+          report_paths: folder/coverage/junit.xml
           check_name: Test report for ${{ github.event.pull_request.head.sha }}
           fail_on_failure: true
           require_passed_tests: true
