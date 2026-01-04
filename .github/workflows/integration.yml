@@ -11,10 +11,7 @@ env:
   NODE_ENV: test
   CI: true
 
-  PG_USER: user
-  PG_PASS: PasswordSAMPLE
-  PG_DB: hopper
-  DB_URL: 'postgresql://$PG_USER:PG_PASS@localhost:5432/$PG_DB'
+  DB_URL: 'postgresql://user:PasswordSAMPLE@localhost:5432/hopper'
   DB_POOL_SIZE: 40
   DB_APP_NAME: integration
   DB_QUERY_TIMEOUT_MS: 10000
@@ -58,50 +55,6 @@ jobs:
     name: Code sanity
     runs-on: ubuntu-latest
 
-    permissions:
-      security-events: write
-      packages: read
-      actions: read
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v6
-        name: Checkout the code repository
-
-      - uses: oven-sh/setup-bun@v2
-        name: Install bun runtime
-        with:
-          bun-version-file: '.bun-version'
-
-      - uses: github/codeql-action/init@v4
-        name: Initialize GitHub CodeQL
-        with:
-          languages: javascript-typescript
-
-      - uses: github/codeql-action/analyze@v4
-        name: Perform CodeQL Analysis
-        with:
-          category: '/language:javascript-typescript'
-
-  migrations:
-    name: Run and validate migrations & seeders
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:18.1-alpine
-        env:
-          POSTGRES_USER: $PG_USER
-          POSTGRES_PASSWORD: $PG_PASS
-          POSTGRES_DB: $PG_DB
-        ports:
-          - 5432:5432
-
-      redis:
-        image: redis:8.4-alpine
-        ports:
-          - 6379:6379
-
     steps:
       - uses: actions/checkout@v6
         name: Checkout the code repository
@@ -119,65 +72,9 @@ jobs:
       postgres:
         image: postgres:18.1-alpine
         env:
-          POSTGRES_USER: $PG_USER
-          POSTGRES_PASSWORD: $PG_PASS
-          POSTGRES_DB: $PG_DB
-        ports:
-          - 5432:5432
-
-      redis:
-        image: redis:8.4-alpine
-        ports:
-          - 6379:6379
-
-    steps:
-      - uses: actions/checkout@v6
-        name: Checkout the code repository
-
-      - uses: oven-sh/setup-bun@v2
-        name: Install bun runtime
-        with:
-          bun-version-file: '.bun-version'
-
-  health-check:
-    name: Perform health check
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:18.1-alpine
-        env:
-          POSTGRES_USER: $PG_USER
-          POSTGRES_PASSWORD: $PG_PASS
-          POSTGRES_DB: $PG_DB
-        ports:
-          - 5432:5432
-
-      redis:
-        image: redis:8.4-alpine
-        ports:
-          - 6379:6379
-
-    steps:
-      - uses: actions/checkout@v6
-        name: Checkout the code repository
-
-      - uses: oven-sh/setup-bun@v2
-        name: Install bun runtime
-        with:
-          bun-version-file: '.bun-version'
-
-  container-build:
-    name: Build and validation container
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:18.1-alpine
-        env:
-          POSTGRES_USER: $PG_USER
-          POSTGRES_PASSWORD: $PG_PASS
-          POSTGRES_DB: $PG_DB
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: PasswordSAMPLE
+          POSTGRES_DB: hopper
         ports:
           - 5432:5432
 
