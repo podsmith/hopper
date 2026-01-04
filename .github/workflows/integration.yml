@@ -22,7 +22,7 @@ env:
   DB_CONN_TIMEOUT_MS: 30000
   DB_LOGS_ENABLED: false
 
-  LOG_SILENCE: true
+  LOG_SILENCE: false
 
   SERVER_PORT: 8001
   SERVER_TIMING_DEBUG: false
@@ -131,3 +131,51 @@ jobs:
         name: Install bun runtime
         with:
           bun-version-file: '.bun-version'
+
+      - run: bun install --frozen-lockfile
+        name: Install dependencies
+
+      - run: make migration:apply
+        name: Apply all pending migrations
+
+      - run: make seeder:apply
+        name: Apply all pending seeders
+
+      - run: |
+          set +e
+          make migration:generate --name="update-database-schema-in-test"
+          code=$?
+
+          set -e
+
+          if [ "$code" -eq 0 ]; then
+            echo "Schema deviation identified. Please check if the entities and migrations are aligned."
+            exit 1
+          fi
+        name: Evaluate database schema deviation
+
+      # - run: bun run test:coverage
+      #   name: Run test cases and collect stats
+      #   env:
+      #     LOG_SILENCE: true
+
+      - run: |
+          rm -rf node_modules
+          bun install --frozen-lockfile --omit=dev
+          bun install -g pm2
+          pm2 start ecosystem.config.cjs
+        name: Run the application in background
+
+      - uses: nick-fields/retry@v3
+        name: Perform health check
+        with:
+          timeout_seconds: 5
+          max_attempts: 5
+          retry_on: error
+          command: |
+            curl -s -o out/response.json http://localhost:$(SERVER_PORT)/api/v1/health
+            jq . out/response.json
+            grep -i "isHealthy" out/response.json > /dev/null
+
+      - run: pm2 kill
+        name: Destroy application instance
