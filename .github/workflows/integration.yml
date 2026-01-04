@@ -67,7 +67,7 @@ jobs:
           bun install -g @commitlint/cli @commitlint/config-conventional
         name: Install commitlint and related utils
 
-      - run: bunx validate-branch-name
+      - run: bunx validate-branch-name -t ${{github.event.pull_request.head.ref}}
         name: Check branch naming convention
 
       - run: |
