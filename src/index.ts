@@ -7,21 +7,7 @@ import logger from '@/utils/logger';
 dataSource
   .initialize()
   .then(() => {
-    server.listen(env.SERVER_PORT);
-
-    process.on('SIGINT', () => {
-      server.close();
-      process.exit(0);
-    });
-
-    process.on('SIGTERM', () => {
-      server.close((err) => {
-        if (err) {
-          process.exit(1);
-        }
-        process.exit(0);
-      });
-    });
+    logger.info('started the server on the designated port');
   })
   .catch((error) => {
     logger.error(
@@ -31,3 +17,6 @@ dataSource
       },
     );
   });
+
+const app = { port: env.SERVER_PORT, fetch: server.fetch };
+export default app;

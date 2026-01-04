@@ -1,4 +1,3 @@
-import { createAdaptorServer } from '@hono/node-server';
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { cors } from 'hono/cors';
@@ -23,7 +22,7 @@ import logger from '@/utils/logger';
 // ============================== all the routers are to be mentioned here
 const router = new Hono().route('', healthRoutes);
 
-export const app = new Hono()
+export const server = new Hono()
   // ============================== the following middlewares are common for all routes
   .use(cors({ origin: env.SERVER_CORS_ORIGIN, credentials: true }))
   .use(etag())
@@ -76,7 +75,3 @@ export const app = new Hono()
     );
   })
   .route(APIVersion.V1, router);
-
-export const server = createAdaptorServer({
-  fetch: app.fetch,
-});

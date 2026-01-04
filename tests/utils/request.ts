@@ -1,6 +1,6 @@
 import type { IncomingHttpHeaders } from 'node:http';
 
-import type { ServerType } from '@hono/node-server';
+import type { Hono } from 'hono';
 import supertest, { type Response } from 'supertest';
 
 import { APIVersion } from '@/constants/api-route';
@@ -31,7 +31,7 @@ type RequestOptions<TRoute extends string> = {
   headers?: IncomingHttpHeaders;
   redirect?: number;
   prefix?: string;
-  server?: ServerType;
+  server?: Hono;
 } & RouteInterpolationOptions<TRoute>;
 
 const interpolate = <TPath extends string>({
@@ -72,6 +72,7 @@ export const request = <TRoute extends string>({
   }
 
   // prettier-ignore
+  // @ts-expect-error ignore this type for now
   return supertest(server)[method](`${prefix}${path}`)
     .set(headers)
     .query(query)

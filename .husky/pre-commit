@@ -9,6 +9,6 @@ fi
 
 gitleaks git --staged --platform azuredevops
 
-npx validate-branch-name
-npx lint-staged
-npm run typecheck
+bunx validate-branch-name
+bunx lint-staged
+bun run typecheck

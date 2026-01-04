@@ -2,8 +2,8 @@
 set -e
 
 gitleaks git --platform azuredevops
-npx validate-branch-name
-npm run format:check
-npm run lint:check
-npm run typecheck
-npm run build
+bunx validate-branch-name
+bun run format:check
+bun run lint:check
+bun run typecheck
+bun run build

@@ -1,5 +1,5 @@
 {
-  "cSpell.words": [],
+  "cSpell.words": ["bunx"],
   "npm.packageManager": "npm",
   "typescript.format.semicolons": "insert",
   "typescript.inlayHints.enumMemberValues.enabled": true,
