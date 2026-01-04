@@ -1,5 +1,5 @@
 # variables
-TYPEORM:=bunx tsx node_modules/typeorm/cli.js
+TYPEORM:=bun run node_modules/typeorm/cli.js
 TYPEORM_MIGRATION_CONFIG_FILE:=src/database/source.ts
 TYPEORM_SEED_CONFIG_FILE:=src/database/_seeder.ts
 TYPEORM_MIGRATION_DIR:=src/database/_migrations
@@ -52,3 +52,13 @@ seeder\:apply:
 # revert the last seed
 seeder\:revert:
 	@$(TYPEORM) migration:revert -d $(TYPEORM_SEED_CONFIG_FILE)
+
+# run test suites
+test:
+	@bun run tests/setup/test.global.setup.ts
+	@bunx vitest
+
+# run test suites and collect coverage
+test\:coverage:
+	@bun run tests/setup/test.global.setup.ts
+	@bunx vitest --coverage

@@ -154,7 +154,7 @@ jobs:
           fi
         name: Evaluate database schema deviation
 
-      # - run: bun run test:coverage
-      #   name: Run test cases and collect stats
-      #   env:
-      #     LOG_SILENCE: true
+      - run: make test:coverage
+        name: Run test cases and collect stats
+        env:
+          LOG_SILENCE: true
