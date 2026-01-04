@@ -67,7 +67,6 @@ export const RedisEnvironmentSchema = z.object({
 
 export const RuntimeEnvironmentSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']),
-  TZ: z.literal('UTC'),
   CI: StringBooleanFieldSchema('CI environment flag').default(false),
 });
 
