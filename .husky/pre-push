@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+set -e
+
+gitleaks git --platform azuredevops
+npx validate-branch-name
+npm run format:check
+npm run lint:check
+npm run typecheck
+npm run build

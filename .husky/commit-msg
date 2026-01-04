@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+set -e
+
+# Run commitlint to validate the commit message against configured rules
+# --edit $1 tells commitlint to lint the message from the given commit message file
+# --no disables npx prompts (ensures non-interactive CI safety)
+npx --no -- commitlint --edit "$1"

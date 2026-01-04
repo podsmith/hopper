@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "streetsidesoftware.code-spell-checker",
+    "docker.docker",
+    "oxc.oxc-vscode",
+    "esbenp.prettier-vscode"
+  ]
+}
