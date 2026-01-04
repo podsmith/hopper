@@ -4,7 +4,7 @@
   "private": true,
   "description": "Resident management at scale",
   "license": "UNLICENSED",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "bun --hot --watch src/index.ts",
     "typecheck": "tsc -p tsconfig.json",
