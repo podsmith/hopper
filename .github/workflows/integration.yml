@@ -185,6 +185,7 @@ jobs:
 
     strategy:
       matrix:
+        fail-fast: false
         include:
           - branch: main
             artifact: main
