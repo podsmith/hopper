@@ -174,6 +174,7 @@ jobs:
           max_attempts: 5
           retry_on: error
           command: |
+            mkdir -p out
             curl -s -o out/response.json http://localhost:${{env.SERVER_PORT}}/api/v1/health
             jq . out/response.json
             grep -i "isHealthy" out/response.json > /dev/null
