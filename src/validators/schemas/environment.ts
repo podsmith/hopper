@@ -33,8 +33,6 @@ export const LoggingEnvironmentSchema = z.object({
     .default(1)
     .transform((v) => `${v}d`),
   LOG_SILENCE: StringBooleanFieldSchema('Log flag').default(false),
-  LOG_ENABLE_CONTAINER_ONLY:
-    StringBooleanFieldSchema('Container log flag').default(false),
 });
 
 export const ServerEnvironmentSchema = z.object({
