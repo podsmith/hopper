@@ -1,6 +1,0 @@
-{
-  "watch": ["src"],
-  "ext": "ts,json",
-  "ignore": ["src/**/_migrations/*", "src/**/_seeders/*"],
-  "exec": "tsx src/index.ts"
-}
