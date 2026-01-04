@@ -1,6 +1,6 @@
 {
   "cSpell.words": ["bunx"],
-  "npm.packageManager": "npm",
+  "npm.packageManager": "bun",
   "typescript.format.semicolons": "insert",
   "typescript.inlayHints.enumMemberValues.enabled": true,
   "typescript.inlayHints.propertyDeclarationTypes.enabled": true,

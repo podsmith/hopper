@@ -30,7 +30,7 @@
     "noEmitOnError": true,
     "rootDir": ".",
     "outDir": "build/",
-    "types": ["jest"],
+    "types": ["@types/bun", "jest"],
     "strict": true,
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
