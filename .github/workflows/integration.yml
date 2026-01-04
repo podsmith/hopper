@@ -49,11 +49,22 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         name: Checkout the code repository
+        with:
+          fetch-depth: 0
 
       - uses: oven-sh/setup-bun@v2
         name: Install bun runtime
         with:
           bun-version-file: '.bun-version'
+
+      - run: bun install -g @commitlint/cli @commitlint/config-conventional
+        name: Install commitlint and related utils
+
+      - run: |
+          npx commitlint \
+            --from ${{ github.event.pull_request.base.sha }} \
+            --to ${{ github.event.pull_request.head.sha }} --verbose
+        name: Check commit messages in pull request
 
   code-sanity:
     name: Code sanity
