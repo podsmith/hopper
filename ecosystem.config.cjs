@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'hopper',
       script: 'build/index.js',
-      interpreter: 'node',
+      interpreter: 'bun',
       node_args: '--enable-source-maps',
       instances: 'max',
       exec_mode: 'cluster',
