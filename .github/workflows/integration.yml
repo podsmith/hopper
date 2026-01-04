@@ -52,15 +52,26 @@ jobs:
         with:
           fetch-depth: 0
 
+      - script: |
+          docker pull zricethezav/gitleaks:latest
+          docker run -v ./:/path zricethezav/gitleaks:latest git --platform github /path
+        displayName: Check for leaked secrets
+
       - uses: oven-sh/setup-bun@v2
         name: Install bun runtime
         with:
           bun-version-file: '.bun-version'
 
-      - run: bun install -g @commitlint/cli @commitlint/config-conventional
+      - run: |
+          bun install --frozen-lockfile
+          bun install -g @commitlint/cli @commitlint/config-conventional
         name: Install commitlint and related utils
 
+      - run: bunx validate-branch-name
+        name: Check branch naming convention
+
       - run: |
+          echo "${{ github.event.pull_request }}"
           npx commitlint \
             --from ${{ github.event.pull_request.base.sha }} \
             --to ${{ github.event.pull_request.head.sha }} --verbose
