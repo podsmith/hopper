@@ -26,12 +26,6 @@ export const DatabaseEnvironmentSchema = z.object({
 });
 
 export const LoggingEnvironmentSchema = z.object({
-  LOG_RETENTION_DAYS: z.coerce
-    .number()
-    .int()
-    .min(1)
-    .default(1)
-    .transform((v) => `${v}d`),
   LOG_SILENCE: StringBooleanFieldSchema('Log flag').default(false),
 });
 

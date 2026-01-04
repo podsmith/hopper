@@ -18,5 +18,8 @@
   "editor.inlayHints.enabled": "on",
   "editor.trimAutoWhitespace": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "oxc.enable": true
+  "oxc.enable": true,
+  "yaml.schemas": {
+    "https://www.schemastore.org/github-workflow.json": "file:///Users/ikrbasak/my-apps/hopper/.github/workflows/integration.yml"
+  }
 }

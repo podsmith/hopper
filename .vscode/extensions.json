@@ -3,6 +3,7 @@
     "streetsidesoftware.code-spell-checker",
     "oxc.oxc-vscode",
     "esbenp.prettier-vscode",
-    "oven.bun-vscode"
+    "oven.bun-vscode",
+    "redis.redis-for-vscode"
   ]
 }
