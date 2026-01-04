@@ -52,7 +52,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - script: |
+      - run: |
           docker pull zricethezav/gitleaks:latest
           docker run -v ./:/path zricethezav/gitleaks:latest git --platform github /path
         name: Check for leaked secrets
