@@ -265,7 +265,7 @@ jobs:
         name: Publish Test Report
         if: always()
         with:
-          report_paths: folder/coverage/junit.xml
+          report_paths: folder/junit.xml
           check_name: Test report for ${{ github.event.pull_request.head.sha }}
           fail_on_failure: true
           require_passed_tests: true
