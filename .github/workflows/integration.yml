@@ -211,18 +211,16 @@ jobs:
         env:
           LOG_SILENCE: true
 
-      - run: |
-          cp junit.xml coverage/
-          cp vitest.config.ts coverage/
+      - run: rm -rf node_modules
         if: always()
-        name: Update location of test report
+        name: Remove unnecessary folders/files
 
       - uses: actions/upload-artifact@v5
-        name: Upload coverage artifact for ${{ matrix.branch }}
+        name: Upload artifact for ${{ matrix.branch }}
         if: always()
         with:
-          name: coverage-${{ matrix.artifact }}
-          path: coverage
+          name: folder-${{ matrix.artifact }}
+          path: .
 
   test-report:
     name: Run tests and report
@@ -236,6 +234,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      checks: write
 
     steps:
       - uses: actions/checkout@v6
@@ -244,23 +243,23 @@ jobs:
       - uses: actions/download-artifact@v6
         name: Download coverage artifacts for pull request
         with:
-          name: coverage-pull-request
-          path: coverage
+          name: folder-pull-request
+          path: folder
 
       - uses: actions/download-artifact@v6
         name: Download coverage artifacts for default branch
         with:
-          name: coverage-main
-          path: coverage-main
+          name: folder-main
+          path: folder-main
 
       - uses: davelosert/vitest-coverage-report-action@v2
         name: Report code coverage to pull request
         with:
-          vite-config-path: coverage/vitest.config.ts
+          vite-config-path: folder/coverage/vitest.config.ts
           file-coverage-mode: changes-affected
-          json-summary-path: coverage/coverage-summary.json
-          json-final-path: coverage/coverage-final.json
-          json-summary-compare-path: coverage-main/coverage-summary.json
+          json-summary-path: folder/coverage/coverage-summary.json
+          json-final-path: folder/coverage/coverage-final.json
+          json-summary-compare-path: folder-main/coverage/coverage-summary.json
 
       - uses: mikepenz/action-junit-report@v5
         name: Publish Test Report
@@ -270,5 +269,4 @@ jobs:
           check_name: Test report for ${{ github.event.pull_request.head.sha }}
           fail_on_failure: true
           require_passed_tests: true
-          detailed_summary: true
           comment: true
