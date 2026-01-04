@@ -65,13 +65,12 @@ jobs:
       - run: |
           bun install --frozen-lockfile
           bun install -g @commitlint/cli @commitlint/config-conventional
-        name: Install commitlint and related utils
+        name: Install dependencies
 
       - run: bunx validate-branch-name -t ${{github.event.pull_request.head.ref}}
         name: Check branch naming convention
 
       - run: |
-          echo "${{ github.event.pull_request }}"
           npx commitlint \
             --from ${{ github.event.pull_request.base.sha }} \
             --to ${{ github.event.pull_request.head.sha }} --verbose
@@ -89,6 +88,21 @@ jobs:
         name: Install bun runtime
         with:
           bun-version-file: '.bun-version'
+
+      - run: bun install --frozen-lockfile
+        name: Install dependencies
+
+      - run: bun run format:check
+        name: Check for formatting errors
+
+      - run: bun run lint:check
+        name: Check for lint errors
+
+      - run: bun run typecheck
+        name: Check for type errors
+
+      - run: bun run build
+        name: Transpile the application
 
   test:
     name: Run tests and report
