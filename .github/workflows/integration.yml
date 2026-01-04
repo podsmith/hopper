@@ -38,7 +38,7 @@ env:
   SMTP_PASS: PasswordSAMPLE
   SMTP_TLS_ENABLED: true
 
-  REVISION: 0
+  REVISION: ${{GITHUB_SHA}}
 
 jobs:
   pull-request-sanity:
@@ -58,6 +58,12 @@ jobs:
     name: Code sanity
     runs-on: ubuntu-latest
 
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
     steps:
       - uses: actions/checkout@v6
         name: Checkout the code repository
@@ -66,6 +72,16 @@ jobs:
         name: Install bun runtime
         with:
           bun-version-file: '.bun-version'
+
+      - uses: github/codeql-action/init@v4
+        name: Initialize GitHub CodeQL
+        with:
+          languages: javascript-typescript
+
+      - uses: github/codeql-action/analyze@v4
+        name: Perform CodeQL Analysis
+        with:
+          category: '/language:javascript-typescript'
 
   migrations:
     name: Run and validate migrations & seeders
