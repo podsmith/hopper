@@ -1,0 +1,41 @@
+name: GitHub CodeQL
+
+on:
+  pull_request:
+    branches:
+      - main
+      - release/*
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  code-quality:
+    name: Check code quality (${{ matrix.language }})
+    runs-on: ubuntu-latest
+
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['javascript-typescript']
+
+    steps:
+      - uses: actions/checkout@v6
+        name: Checkout the code repository
+
+      - uses: github/codeql-action/init@v4
+        name: Initialize GitHub CodeQL
+        with:
+          languages: ${{matrix.language}}
+
+      - uses: github/codeql-action/analyze@v4
+        name: Perform CodeQL Analysis
+        with:
+          category: '/language:${{matrix.language}}'

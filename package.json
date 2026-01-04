@@ -1,0 +1,77 @@
+{
+  "name": "hopper",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Resident management at scale",
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot --watch src/index.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "prebuild": "tsc -p tsconfig.build.json",
+    "build": "tsc-alias -p tsconfig.build.json",
+    "start": "node --enable-source-maps build/index.js",
+    "format:fix": "prettier -uw --cache --cache-location=.cache/prettier-cache .",
+    "format:check": "prettier -uc --cache --cache-location=.cache/prettier-cache .",
+    "lint:fix": "oxlint --fix --type-aware --report-unused-disable-directives",
+    "lint:check": "oxlint --type-aware --report-unused-disable-directives",
+    "test": "tsx node_modules/jest/bin/jest.js",
+    "test:coverage": "tsx node_modules/jest/bin/jest.js --coverage",
+    "prepare": "husky || true"
+  },
+  "dependencies": {
+    "dotenv-flow": "^4.1.0",
+    "hono": "^4.11.3",
+    "ioredis": "^5.8.2",
+    "pg": "^8.16.3",
+    "qs": "^6.14.1",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.28",
+    "uuid": "^13.0.0",
+    "winston": "^3.19.0",
+    "zod": "^4.3.4"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.3.0",
+    "@commitlint/config-conventional": "^20.3.0",
+    "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
+    "@prettier/plugin-oxc": "^0.1.3",
+    "@swc/core": "^1.15.8",
+    "@swc/jest": "^0.2.39",
+    "@total-typescript/ts-reset": "^0.6.1",
+    "@types/bun": "^1.3.5",
+    "@types/jest": "^30.0.0",
+    "@types/qs": "^6.14.0",
+    "@types/supertest": "^6.0.3",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "dayjs": "^1.11.19",
+    "husky": "^9.1.7",
+    "jest": "^30.2.0",
+    "jest-junit": "^16.0.0",
+    "lint-staged": "^16.2.7",
+    "oxlint": "^1.36.0",
+    "oxlint-tsgolint": "^0.10.1",
+    "prettier": "^3.7.4",
+    "prettier-plugin-ember-template-tag": "^2.1.2",
+    "prettier-plugin-toml": "^2.0.6",
+    "supertest": "^7.1.4",
+    "tsc-alias": "^1.8.16",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "validate-branch-name": "^1.3.2"
+  },
+  "lint-staged": {
+    "*": "prettier -uw --cache --cache-location=.cache/prettier-cache",
+    "*.ts": "oxlint --fix --type-aware --report-unused-disable-directives"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "validate-branch-name": {
+    "pattern": "^(feat|bugfix|hotfix|chore)/[a-z0-9][a-z0-9-]{4,40}[a-z0-9]$"
+  }
+}

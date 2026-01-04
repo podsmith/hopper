@@ -1,0 +1,93 @@
+name: Pull request validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - release/*
+  workflow_dispatch:
+
+env:
+  NODE_ENV: test
+  CI: true
+
+  DB_URL: 'postgresql://user:PasswordSAMPLE@localhost:5432/hopper'
+  DB_POOL_SIZE: 40
+  DB_APP_NAME: integration
+  DB_QUERY_TIMEOUT_MS: 10000
+  DB_CONN_TIMEOUT_MS: 30000
+  DB_LOGS_ENABLED: false
+
+  LOG_SILENCE: true
+
+  SERVER_PORT: 8001
+  SERVER_TIMING_DEBUG: false
+  SERVER_TIMEOUT_MS: 30000
+  SERVER_MAX_BODY_SIZE_KB: 256
+  SERVER_CORS_ORIGIN: example.com
+  SERVER_ERROR_DEBUG: false
+
+  REDIS_URL: 'redis://localhost:6379/0'
+
+  SMTP_HOST: smtp.ethereal.email
+  SMTP_PORT: 587
+  SMTP_USER: someone@ethereal.email
+  SMTP_PASS: PasswordSAMPLE
+  SMTP_TLS_ENABLED: true
+
+  REVISION: ${{github.GITHUB_SHA}}
+
+jobs:
+  pull-request-sanity:
+    name: Pull request sanity
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        name: Checkout the code repository
+
+      - uses: oven-sh/setup-bun@v2
+        name: Install bun runtime
+        with:
+          bun-version-file: '.bun-version'
+
+  code-sanity:
+    name: Code sanity
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        name: Checkout the code repository
+
+      - uses: oven-sh/setup-bun@v2
+        name: Install bun runtime
+        with:
+          bun-version-file: '.bun-version'
+
+  test:
+    name: Run tests and report
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18.1-alpine
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: PasswordSAMPLE
+          POSTGRES_DB: hopper
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:8.4-alpine
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v6
+        name: Checkout the code repository
+
+      - uses: oven-sh/setup-bun@v2
+        name: Install bun runtime
+        with:
+          bun-version-file: '.bun-version'

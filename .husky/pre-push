@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+set -e
+
+gitleaks git --platform github
+bunx validate-branch-name
+bun run format:check
+bun run lint:check
+bun run typecheck
+bun run build

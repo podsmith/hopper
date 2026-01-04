@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+set -e
+
+# Check if there are staged changes
+if git diff --cached --quiet; then
+  printf "\033[33mNo staged changes found.\033[0m\n"
+  exit 0
+fi
+
+gitleaks git --staged --platform github
+
+bunx validate-branch-name
+bunx lint-staged
+bun run typecheck

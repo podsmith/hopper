@@ -1,0 +1,25 @@
+{
+  "cSpell.words": ["bunx"],
+  "npm.packageManager": "bun",
+  "typescript.format.semicolons": "insert",
+  "typescript.inlayHints.enumMemberValues.enabled": true,
+  "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+  "typescript.inlayHints.variableTypes.enabled": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "prettier.configPath": "prettier.config.mjs",
+  "typescript.preferences.quoteStyle": "single",
+  "prettier.singleQuote": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "editor.wordWrapColumn": 120,
+  "editor.renderFinalNewline": "on",
+  "editor.inlayHints.enabled": "on",
+  "editor.trimAutoWhitespace": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "oxc.enable": true,
+  "yaml.schemas": {
+    "https://www.schemastore.org/github-workflow.json": "file:///Users/ikrbasak/my-apps/hopper/.github/workflows/integration.yml"
+  }
+}
