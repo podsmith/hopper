@@ -160,6 +160,7 @@ jobs:
       #     LOG_SILENCE: true
 
       - run: |
+          bun run build
           rm -rf node_modules
           bun install --frozen-lockfile --omit=dev
           bun install -g pm2
