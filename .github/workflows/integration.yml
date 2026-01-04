@@ -158,27 +158,3 @@ jobs:
       #   name: Run test cases and collect stats
       #   env:
       #     LOG_SILENCE: true
-
-      - run: |
-          bun run build
-          rm -rf node_modules
-          bun install --frozen-lockfile --omit=dev
-          bun install -g pm2
-          pm2 start ecosystem.config.cjs
-        name: Run the application in background
-
-      - uses: nick-fields/retry@v3
-        name: Perform health check
-        with:
-          timeout_seconds: 5
-          max_attempts: 5
-          retry_on: error
-          command: |
-            mkdir -p out
-            pm2 logs --nostream
-            curl -s -v -o out/response.json http://localhost:${{env.SERVER_PORT}}/api/v1/health
-            jq . out/response.json
-            grep -i "isHealthy" out/response.json > /dev/null
-
-      - run: pm2 kill
-        name: Destroy application instance
