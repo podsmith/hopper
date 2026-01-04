@@ -38,7 +38,7 @@ env:
   SMTP_PASS: PasswordSAMPLE
   SMTP_TLS_ENABLED: true
 
-  REVISION: ${{GITHUB_SHA}}
+  REVISION: ${{github.GITHUB_SHA}}
 
 jobs:
   pull-request-sanity:
