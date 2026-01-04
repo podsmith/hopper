@@ -175,7 +175,8 @@ jobs:
           retry_on: error
           command: |
             mkdir -p out
-            curl -s -o out/response.json http://localhost:${{env.SERVER_PORT}}/api/v1/health
+            pm2 logs --nostream
+            curl -s -v -o out/response.json http://localhost:${{env.SERVER_PORT}}/api/v1/health
             jq . out/response.json
             grep -i "isHealthy" out/response.json > /dev/null
 
