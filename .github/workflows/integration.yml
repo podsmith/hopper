@@ -55,7 +55,7 @@ jobs:
       - script: |
           docker pull zricethezav/gitleaks:latest
           docker run -v ./:/path zricethezav/gitleaks:latest git --platform github /path
-        displayName: Check for leaked secrets
+        name: Check for leaked secrets
 
       - uses: oven-sh/setup-bun@v2
         name: Install bun runtime
