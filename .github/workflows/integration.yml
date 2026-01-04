@@ -108,6 +108,10 @@ jobs:
     name: Check database and entity sanity
     runs-on: ubuntu-latest
 
+    needs:
+      - pull-request-sanity
+      - code-sanity
+
     services:
       postgres:
         image: postgres:18.1-alpine
@@ -157,6 +161,9 @@ jobs:
   test:
     name: Run tests and report
     runs-on: ubuntu-latest
+
+    needs:
+      - database-check
 
     permissions:
       contents: read
@@ -217,7 +224,8 @@ jobs:
     name: Run tests and report
     runs-on: ubuntu-latest
 
-    needs: test
+    needs:
+      - test
 
     permissions:
       contents: read
