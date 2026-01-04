@@ -12,7 +12,11 @@ const config = {
   endOfLine: 'lf',
   embeddedLanguageFormatting: 'auto',
   bracketSpacing: true,
-  plugins: ['@prettier/plugin-oxc', '@ianvs/prettier-plugin-sort-imports'],
+  plugins: [
+    'prettier-plugin-toml',
+    '@prettier/plugin-oxc',
+    '@ianvs/prettier-plugin-sort-imports',
+  ],
   importOrderParserPlugins: ['typescript', 'jsx', 'decorators-legacy'],
   importOrder: [
     '<BUILTIN_MODULES>',

@@ -53,6 +53,8 @@
     "oxlint": "^1.36.0",
     "oxlint-tsgolint": "^0.10.1",
     "prettier": "^3.7.4",
+    "prettier-plugin-ember-template-tag": "^2.1.2",
+    "prettier-plugin-toml": "^2.0.6",
     "supertest": "^7.1.4",
     "tsc-alias": "^1.8.16",
     "tsconfig-paths": "^4.2.0",
