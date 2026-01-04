@@ -7,7 +7,7 @@ if git diff --cached --quiet; then
   exit 0
 fi
 
-gitleaks git --staged --platform azuredevops
+gitleaks git --staged --platform github
 
 bunx validate-branch-name
 bunx lint-staged
