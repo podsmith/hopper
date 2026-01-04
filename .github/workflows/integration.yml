@@ -211,6 +211,7 @@ jobs:
           LOG_SILENCE: true
 
       - run: mv junit.xml coverage/
+        if: always()
         name: Update location of test report
 
       - uses: actions/upload-artifact@v5
@@ -226,6 +227,8 @@ jobs:
 
     needs:
       - test
+
+    if: always()
 
     permissions:
       contents: read
