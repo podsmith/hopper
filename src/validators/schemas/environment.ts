@@ -49,14 +49,8 @@ export const ServerEnvironmentSchema = z.object({
     .string()
     .trim()
     .optional()
-    .default('*')
-    .transform((v) => {
-      if (v === '*') {
-        return v;
-      }
-
-      return v.split(';').map((r) => r.trim());
-    }),
+    .default('*.example.com')
+    .transform((v) => v.split(';').map((r) => r.trim())),
   SERVER_ERROR_DEBUG:
     StringBooleanFieldSchema('Server error flag').default(false),
 });
