@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { decode, encode } from '@/utils/querystring';
 
 describe('utilities to process query strings', () => {

@@ -5,7 +5,11 @@ on:
     branches:
       - main
       - release/*
-  workflow_dispatch:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
 
 env:
   NODE_ENV: test
@@ -18,7 +22,7 @@ env:
   DB_CONN_TIMEOUT_MS: 30000
   DB_LOGS_ENABLED: false
 
-  LOG_SILENCE: true
+  LOG_SILENCE: false
 
   SERVER_PORT: 8001
   SERVER_TIMING_DEBUG: false
@@ -35,7 +39,7 @@ env:
   SMTP_PASS: PasswordSAMPLE
   SMTP_TLS_ENABLED: true
 
-  REVISION: ${{github.GITHUB_SHA}}
+  REVISION: ${{ github.event.pull_request.head.sha }}
 
 jobs:
   pull-request-sanity:
@@ -45,11 +49,32 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         name: Checkout the code repository
+        with:
+          fetch-depth: 0
+
+      - run: |
+          docker pull zricethezav/gitleaks:latest
+          docker run -v ./:/path zricethezav/gitleaks:latest git --platform github /path
+        name: Check for leaked secrets
 
       - uses: oven-sh/setup-bun@v2
         name: Install bun runtime
         with:
           bun-version-file: '.bun-version'
+
+      - run: |
+          bun install --frozen-lockfile
+          bun install -g @commitlint/cli @commitlint/config-conventional
+        name: Install dependencies
+
+      - run: bunx validate-branch-name -t ${{ github.event.pull_request.head.ref }}
+        name: Check branch naming convention
+
+      - run: |
+          npx commitlint \
+            --from ${{ github.event.pull_request.base.sha }} \
+            --to ${{ github.event.pull_request.head.sha }} --verbose
+        name: Check commit messages in pull request
 
   code-sanity:
     name: Code sanity
@@ -64,8 +89,23 @@ jobs:
         with:
           bun-version-file: '.bun-version'
 
-  test:
-    name: Run tests and report
+      - run: bun install --frozen-lockfile
+        name: Install dependencies
+
+      - run: bun run format:check
+        name: Check for formatting errors
+
+      - run: bun run lint:check
+        name: Check for lint errors
+
+      - run: bun run typecheck
+        name: Check for type errors
+
+      - run: bun run build
+        name: Transpile the application
+
+  database-check:
+    name: Check database and entity sanity
     runs-on: ubuntu-latest
 
     services:
@@ -91,3 +131,129 @@ jobs:
         name: Install bun runtime
         with:
           bun-version-file: '.bun-version'
+
+      - run: bun install --frozen-lockfile
+        name: Install dependencies
+
+      - run: make migration:apply
+        name: Apply all pending migrations
+
+      - run: make seeder:apply
+        name: Apply all pending seeders
+
+      - run: |
+          set +e
+          make migration:generate name="update-database-schema-in-test"
+          code=$?
+
+          set -e
+
+          if [ "$code" -eq 0 ]; then
+            echo "Schema deviation identified. Please check if the entities and migrations are aligned."
+            exit 1
+          fi
+        name: Evaluate database schema deviation
+
+  test:
+    name: Run tests and report
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    services:
+      postgres:
+        image: postgres:18.1-alpine
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: PasswordSAMPLE
+          POSTGRES_DB: hopper
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:8.4-alpine
+        ports:
+          - 6379:6379
+
+    strategy:
+      matrix:
+        include:
+          - branch: main
+            artifact: main
+          - branch: ${{ github.event.pull_request.head.ref }}
+            artifact: pull-request
+
+    steps:
+      - uses: actions/checkout@v6
+        name: Checkout the code repository
+        with:
+          ref: ${{ matrix.branch }}
+
+      - uses: oven-sh/setup-bun@v2
+        name: Install bun runtime
+        with:
+          bun-version-file: '.bun-version'
+
+      - run: bun install --frozen-lockfile
+        name: Install dependencies
+
+      - run: make test:coverage
+        name: Run test cases and collect stats
+        env:
+          LOG_SILENCE: true
+
+      - run: mv junit.xml coverage/
+        name: Update location of test report
+
+      - uses: actions/upload-artifact@v5
+        name: Upload coverage artifact for ${{ matrix.branch }}
+        if: always()
+        with:
+          name: coverage-${{ matrix.artifact }}
+          path: coverage
+
+  test-report:
+    name: Run tests and report
+    runs-on: ubuntu-latest
+
+    needs: test
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v6
+        name: Checkout the code repository
+
+      - uses: actions/download-artifact@v6
+        name: Download coverage artifacts for pull request
+        with:
+          name: coverage-pull-request
+          path: coverage
+
+      - uses: actions/download-artifact@v6
+        name: Download coverage artifacts for default branch
+        with:
+          name: coverage-main
+          path: coverage-main
+
+      - uses: davelosert/vitest-coverage-report-action@v2
+        name: Report code coverage to pull request
+        with:
+          file-coverage-mode: changes-affected
+          json-summary-path: coverage-pull-request/coverage-summary-backend.json
+          json-final-path: coverage-pull-request/coverage-final-backend.json
+          json-summary-compare-path: coverage-main/coverage-summary.json
+
+      - uses: mikepenz/action-junit-report@v5
+        name: Publish Test Report
+        if: always()
+        with:
+          report_paths: coverage/junit.xml
+          check_name: Test report for ${{ github.event.pull_request.head.sha }}
+          fail_on_failure: true
+          require_passed_tests: true
+          detailed_summary: true
+          comment: true
