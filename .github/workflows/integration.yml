@@ -270,3 +270,4 @@ jobs:
           fail_on_failure: true
           require_passed_tests: true
           comment: true
+          updateComment: true
