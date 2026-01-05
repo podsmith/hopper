@@ -6,12 +6,17 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  contents: write
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   release:
+    name: Prepare a release
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v6
