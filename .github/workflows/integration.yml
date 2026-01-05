@@ -213,6 +213,18 @@ jobs:
           script: |
             const { readFileSync, writeFileSync } = require("fs");
 
+            const {
+              GITHUB_RUN_NUMBER,
+              GITHUB_RUN_ID,
+              GITHUB_SHA,
+              GITHUB_SERVER_URL,
+              GITHUB_REPOSITORY
+            } = process.env;
+
+            const shortSha = GITHUB_SHA.slice(0, 7);
+            const runUrl = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}`;
+            const commitUrl = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}`;
+
             const json = JSON.parse(readFileSync('junit.json'));
             const content = `## Test result
 
@@ -228,6 +240,8 @@ jobs:
             |   ${json.numTotalTests}    |    ${json.numPassedTests}    |    ${json.numFailedTests}    |    ${json.numPendingTests}     |    ${json.numTodoTests}     |    ${json.numTotalTests - json.numPassedTests - json.numFailedTests - json.numPendingTests - json.numTodoTests}     |
 
             >  ${json.success ? '✅' : '❌'} Test suite ${json.success ? 'passed' : 'failed'}
+
+            Generated in workflow [#${GITHUB_RUN_NUMBER}](${runUrl}) for commit [${shortSha}](${commitUrl})
             `;
 
             writeFileSync("result.md", content);
