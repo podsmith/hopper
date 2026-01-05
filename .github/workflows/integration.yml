@@ -159,7 +159,7 @@ jobs:
         name: Evaluate database schema deviation
 
   test:
-    name: Run tests and report
+    name: Run tests
     runs-on: ubuntu-latest
 
     needs:
@@ -212,27 +212,28 @@ jobs:
           LOG_SILENCE: true
 
       - run: rm -rf node_modules
-        if: always()
+        if: ${{ !cancelled() }}
         name: Remove unnecessary folders/files
 
       - uses: actions/upload-artifact@v5
         name: Upload artifact for ${{ matrix.branch }}
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: folder-${{ matrix.artifact }}
           path: .
 
   test-report:
-    name: Run tests and report
+    name: Report tests
     runs-on: ubuntu-latest
 
     needs:
       - test
 
-    if: always()
+    if: ${{ !cancelled() }}
 
     permissions:
       contents: read
+      actions: read
       pull-requests: write
       checks: write
 
@@ -261,13 +262,9 @@ jobs:
           json-final-path: folder/coverage/coverage-final.json
           json-summary-compare-path: folder-main/coverage/coverage-summary.json
 
-      - uses: mikepenz/action-junit-report@v5
-        name: Publish Test Report
-        if: always()
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          report_paths: folder/junit.xml
-          check_name: Test report for ${{ github.event.pull_request.head.sha }}
-          fail_on_failure: true
-          require_passed_tests: true
-          comment: true
-          updateComment: true
+          files: |
+            folder/*.xml
+          check_name: Test result
