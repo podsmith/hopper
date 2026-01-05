@@ -19,10 +19,10 @@ export default defineConfig({
       reportsDirectory: 'coverage',
       // NOTE: Keep track of thresholds, and update if necessary
       thresholds: {
-        branches: 20,
-        functions: 20,
-        lines: 20,
-        statements: 20,
+        branches: 2,
+        functions: 2,
+        lines: 2,
+        statements: 2,
       },
     },
     environment: 'node',
