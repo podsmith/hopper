@@ -206,8 +206,34 @@ jobs:
         with:
           file-coverage-mode: none
 
-      - name: Report test result to pull request
-        uses: test-summary/action@v2
+      - uses: actions/github-script@v8
+        name: Prepare test result report
         if: ${{ !cancelled() }}
         with:
-          paths: junit.xml
+          script: |
+            import { readFileSync, writeFileSync } from "fs";
+
+            const json = JSON.parse(readFileSync('junit.json'));
+            const content = `## Test result
+
+            **Test suites**
+
+            | Total | Passed | Failed | Pending |
+            |-------|--------|--------|---------|
+            |   ${json.numTotalTestSuites}    |    ${json.numPassedTestSuites}    |    ${json.numFailedTestSuites}    |    ${json.numPendingTestSuites}     |
+
+            **Tests**
+            | Total | Passed | Failed | Pending | Todo | Skipped |
+            |-------|--------|--------|---------|---------|---------|
+            |   ${json.numTotalTests}    |    ${json.numPassedTests}    |    ${json.numFailedTests}    |    ${json.numPendingTests}     |    ${json.numTodoTests}     |    ${json.numTotalTests - json.numPassedTests - json.numFailedTests - json.numPendingTests - json.numTodoTests}     |
+
+            >  ${json.success ? '✅' : '❌'} Test suite ${json.success ? 'passed' : 'failed'}
+            `;
+
+            writeFileSync("result.md", content);
+
+      - uses: thollander/actions-comment-pull-request@v3
+        name: Report test result to pull request
+        if: ${{ !cancelled() }}
+        with:
+          file-path: result.md
