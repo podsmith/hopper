@@ -4,12 +4,16 @@ on:
   pull_request:
     branches:
       - main
-      - release/*
+      - release/**
     types:
       - opened
       - reopened
       - synchronize
       - edited
+
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   NODE_ENV: test
@@ -42,6 +46,35 @@ env:
   REVISION: ${{ github.event.pull_request.head.sha }}
 
 jobs:
+  code-quality:
+    name: Check code quality
+    runs-on: ubuntu-latest
+
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['javascript-typescript']
+
+    steps:
+      - uses: actions/checkout@v6
+        name: Checkout the code repository
+
+      - uses: github/codeql-action/init@v4
+        name: Initialize GitHub CodeQL
+        with:
+          languages: ${{ matrix.language }}
+
+      - uses: github/codeql-action/analyze@v4
+        name: Perform CodeQL analysis
+        with:
+          category: '/language:${{ matrix.language }}'
+
   pull-request-sanity:
     name: Pull request sanity
     runs-on: ubuntu-latest
@@ -110,10 +143,6 @@ jobs:
   database-check:
     name: Check database and entity sanity
     runs-on: ubuntu-latest
-
-    needs:
-      - pull-request-sanity
-      - code-sanity
 
     services:
       postgres:
@@ -205,6 +234,7 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           file-coverage-mode: none
+          threshold-icons: "{0: '🔴', 80: '🟠', 90: '🟢'}"
 
       - uses: actions/github-script@v8
         name: Prepare test result report
@@ -216,17 +246,17 @@ jobs:
             const {
               GITHUB_RUN_NUMBER,
               GITHUB_RUN_ID,
-              GITHUB_SHA,
+              SHA,
               GITHUB_SERVER_URL,
               GITHUB_REPOSITORY
             } = process.env;
 
-            const shortSha = GITHUB_SHA.slice(0, 7);
+            const shortSha = SHA.slice(0, 7);
             const runUrl = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}`;
-            const commitUrl = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}`;
+            const commitUrl = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${SHA}`;
 
             const json = JSON.parse(readFileSync('junit.json'));
-            const content = `## Test result
+            const content = `## ${json.success ? '✅' : '❌'} Test Suite ${json.success ? 'Passed' : 'Failed'}
 
             **Test suites**
 
@@ -239,15 +269,17 @@ jobs:
             |-------|--------|--------|---------|---------|---------|
             |   ${json.numTotalTests}    |    ${json.numPassedTests}    |    ${json.numFailedTests}    |    ${json.numPendingTests}     |    ${json.numTodoTests}     |    ${json.numTotalTests - json.numPassedTests - json.numFailedTests - json.numPendingTests - json.numTodoTests}     |
 
-            >  ${json.success ? '✅' : '❌'} Test suite ${json.success ? 'passed' : 'failed'}
-
-            Generated in workflow [#${GITHUB_RUN_NUMBER}](${runUrl}) for commit [${shortSha}](${commitUrl})
+            _Generated in workflow [#${GITHUB_RUN_NUMBER}](${runUrl}) for commit [${shortSha}](${commitUrl})_
             `;
 
             writeFileSync("result.md", content);
+        env:
+          SHA: ${{ github.event.pull_request.head.sha }}
 
       - uses: thollander/actions-comment-pull-request@v3
         name: Report test result to pull request
         if: ${{ !cancelled() }}
         with:
           file-path: result.md
+          comment-tag: test-result-report
+          mode: upsert
