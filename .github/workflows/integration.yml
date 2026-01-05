@@ -246,14 +246,14 @@ jobs:
             const {
               GITHUB_RUN_NUMBER,
               GITHUB_RUN_ID,
-              GITHUB_SHA,
+              SHA,
               GITHUB_SERVER_URL,
               GITHUB_REPOSITORY
             } = process.env;
 
-            const shortSha = GITHUB_SHA.slice(0, 7);
+            const shortSha = SHA.slice(0, 7);
             const runUrl = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}`;
-            const commitUrl = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}`;
+            const commitUrl = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${SHA}`;
 
             const json = JSON.parse(readFileSync('junit.json'));
             const content = `## ${json.success ? '✅' : '❌'} Test Suite ${json.success ? 'Passed' : 'Failed'}
@@ -273,9 +273,13 @@ jobs:
             `;
 
             writeFileSync("result.md", content);
+        env:
+          SHA: ${{ github.event.pull_request.head.sha }}
 
       - uses: thollander/actions-comment-pull-request@v3
         name: Report test result to pull request
         if: ${{ !cancelled() }}
         with:
           file-path: result.md
+          comment-tag: test-result-report
+          mode: upsert
