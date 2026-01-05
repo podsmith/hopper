@@ -209,7 +209,8 @@ jobs:
         name: Report code coverage to pull request
         if: ${{ !cancelled() }}
         with:
-          file-coverage-mode: changes-affected
+          file-coverage-mode: none
+          name: Test coverage report
 
       - name: Report test result to pull request
         uses: test-summary/action@v2
