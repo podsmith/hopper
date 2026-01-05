@@ -108,6 +108,10 @@ jobs:
     name: Check database and entity sanity
     runs-on: ubuntu-latest
 
+    needs:
+      - pull-request-sanity
+      - code-sanity
+
     services:
       postgres:
         image: postgres:18.1-alpine
@@ -155,8 +159,11 @@ jobs:
         name: Evaluate database schema deviation
 
   test:
-    name: Run tests and report
+    name: Run tests
     runs-on: ubuntu-latest
+
+    needs:
+      - database-check
 
     permissions:
       contents: read
@@ -177,6 +184,7 @@ jobs:
           - 6379:6379
 
     strategy:
+      fail-fast: false
       matrix:
         include:
           - branch: main
@@ -203,25 +211,31 @@ jobs:
         env:
           LOG_SILENCE: true
 
-      - run: mv junit.xml coverage/
-        name: Update location of test report
+      - run: rm -rf node_modules
+        if: ${{ !cancelled() }}
+        name: Remove unnecessary folders/files
 
       - uses: actions/upload-artifact@v5
-        name: Upload coverage artifact for ${{ matrix.branch }}
-        if: always()
+        name: Upload artifact for ${{ matrix.branch }}
+        if: ${{ !cancelled() }}
         with:
-          name: coverage-${{ matrix.artifact }}
-          path: coverage
+          name: folder-${{ matrix.artifact }}
+          path: .
 
   test-report:
-    name: Run tests and report
+    name: Report tests
     runs-on: ubuntu-latest
 
-    needs: test
+    needs:
+      - test
+
+    if: ${{ !cancelled() }}
 
     permissions:
       contents: read
+      actions: read
       pull-requests: write
+      checks: write
 
     steps:
       - uses: actions/checkout@v6
@@ -230,30 +244,27 @@ jobs:
       - uses: actions/download-artifact@v6
         name: Download coverage artifacts for pull request
         with:
-          name: coverage-pull-request
-          path: coverage
+          name: folder-pull-request
+          path: folder
 
       - uses: actions/download-artifact@v6
         name: Download coverage artifacts for default branch
         with:
-          name: coverage-main
-          path: coverage-main
+          name: folder-main
+          path: folder-main
 
       - uses: davelosert/vitest-coverage-report-action@v2
         name: Report code coverage to pull request
         with:
+          vite-config-path: folder/vitest.config.ts
           file-coverage-mode: changes-affected
-          json-summary-path: coverage-pull-request/coverage-summary-backend.json
-          json-final-path: coverage-pull-request/coverage-final-backend.json
-          json-summary-compare-path: coverage-main/coverage-summary.json
+          json-summary-path: folder/coverage/coverage-summary.json
+          json-final-path: folder/coverage/coverage-final.json
+          json-summary-compare-path: folder-main/coverage/coverage-summary.json
 
-      - uses: mikepenz/action-junit-report@v5
-        name: Publish Test Report
-        if: always()
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          report_paths: coverage/junit.xml
-          check_name: Test report for ${{ github.event.pull_request.head.sha }}
-          fail_on_failure: true
-          require_passed_tests: true
-          detailed_summary: true
-          comment: true
+          files: |
+            folder/*.xml
+          check_name: Test result
