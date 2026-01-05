@@ -211,7 +211,7 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           script: |
-            import { readFileSync, writeFileSync } from "fs";
+            const { readFileSync, writeFileSync } = require("fs");
 
             const json = JSON.parse(readFileSync('junit.json'));
             const content = `## Test result
