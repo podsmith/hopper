@@ -5,20 +5,6 @@ import { createLogger, format, transports } from 'winston';
 
 import { env } from '@/configs/environment';
 
-Object.defineProperty(Error.prototype, 'toJSON', {
-  value: function () {
-    // oxlint-disable-next-line prefer-object-spread
-    return Object.assign({}, this, {
-      name: this.name,
-      message: this.message,
-      stack: this.stack,
-      issues: this?.issues,
-    });
-  },
-  writable: false,
-  configurable: false,
-});
-
 const jsonLogFormat = format.combine(
   format.timestamp(),
   format.errors({ stack: true }),
