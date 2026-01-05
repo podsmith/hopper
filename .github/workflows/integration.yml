@@ -179,7 +179,7 @@ jobs:
         name: Evaluate database schema deviation
 
   test:
-    name: Run tests
+    name: Run tests and report
     runs-on: ubuntu-latest
 
     needs:
@@ -187,6 +187,9 @@ jobs:
 
     permissions:
       contents: read
+      actions: read
+      pull-requests: write
+      checks: write
 
     services:
       postgres:
@@ -203,20 +206,9 @@ jobs:
         ports:
           - 6379:6379
 
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - branch: main
-            artifact: main
-          - branch: ${{ github.event.pull_request.head.ref }}
-            artifact: pull-request
-
     steps:
       - uses: actions/checkout@v6
         name: Checkout the code repository
-        with:
-          ref: ${{ matrix.branch }}
 
       - uses: oven-sh/setup-bun@v2
         name: Install bun runtime
@@ -231,60 +223,46 @@ jobs:
         env:
           LOG_SILENCE: true
 
-      - run: rm -rf node_modules
-        if: ${{ !cancelled() }}
-        name: Remove unnecessary folders/files
-
-      - uses: actions/upload-artifact@v5
-        name: Upload artifact for ${{ matrix.branch }}
-        if: ${{ !cancelled() }}
+      - name: Publish test check (success)
+        uses: actions/github-script@v7
+        if: ${{ success() }}
         with:
-          name: folder-${{ matrix.artifact }}
-          path: .
+          script: |
+            await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: 'My Custom Check',
+              head_sha: context.sha,
+              status: 'completed',
+              conclusion: 'success',
+              output: {
+                title: 'Test result and coverage check',
+                summary: 'Test result and coverage check',
+                text: 'success'
+              }
+            })
 
-  test-report:
-    name: Report tests
-    runs-on: ubuntu-latest
-
-    needs:
-      - test
-
-    if: ${{ !cancelled() }}
-
-    permissions:
-      contents: read
-      actions: read
-      pull-requests: write
-      checks: write
-
-    steps:
-      - uses: actions/checkout@v6
-        name: Checkout the code repository
-
-      - uses: actions/download-artifact@v6
-        name: Download coverage artifacts for pull request
+      - name: Publish test check (failure)
+        uses: actions/github-script@v7
+        if: ${{ !success() }}
         with:
-          name: folder-pull-request
-          path: folder
-
-      - uses: actions/download-artifact@v6
-        name: Download coverage artifacts for default branch
-        with:
-          name: folder-main
-          path: folder-main
+          script: |
+            await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: 'My Custom Check',
+              head_sha: context.sha,
+              status: 'completed',
+              conclusion: 'failure',
+              output: {
+                title: 'Test result and coverage check',
+                summary: 'Test result and coverage check',
+                text: 'failure'
+              }
+            })
 
       - uses: davelosert/vitest-coverage-report-action@v2
         name: Report code coverage to pull request
+        if: ${{ !cancelled() }}
         with:
-          vite-config-path: folder/vitest.config.ts
           file-coverage-mode: changes-affected
-          json-summary-path: folder/coverage/coverage-summary.json
-          json-final-path: folder/coverage/coverage-final.json
-          json-summary-compare-path: folder-main/coverage/coverage-summary.json
-
-      - name: Publish test results
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        with:
-          files: |
-            folder/*.xml
-          check_name: Test result
