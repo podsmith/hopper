@@ -11,6 +11,10 @@ on:
       - synchronize
       - edited
 
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   NODE_ENV: test
   CI: true
@@ -42,6 +46,35 @@ env:
   REVISION: ${{ github.event.pull_request.head.sha }}
 
 jobs:
+  code-quality:
+    name: Check code quality
+    runs-on: ubuntu-latest
+
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['javascript-typescript']
+
+    steps:
+      - uses: actions/checkout@v6
+        name: Checkout the code repository
+
+      - uses: github/codeql-action/init@v4
+        name: Initialize GitHub CodeQL
+        with:
+          languages: ${{ matrix.language }}
+
+      - uses: github/codeql-action/analyze@v4
+        name: Perform CodeQL analysis
+        with:
+          category: '/language:${{ matrix.language }}'
+
   pull-request-sanity:
     name: Pull request sanity
     runs-on: ubuntu-latest
@@ -110,10 +143,6 @@ jobs:
   database-check:
     name: Check database and entity sanity
     runs-on: ubuntu-latest
-
-    needs:
-      - pull-request-sanity
-      - code-sanity
 
     services:
       postgres:
