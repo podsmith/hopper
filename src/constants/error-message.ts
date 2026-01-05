@@ -30,7 +30,4 @@ export const ErrorMessage = {
         .map((v) => v.toString())
         .join(', ')}`,
   },
-  Countries: {
-    DuplicateExists: 'Country with the specified details already exists',
-  },
 } as const;
