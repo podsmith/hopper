@@ -205,6 +205,7 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           file-coverage-mode: none
+          threshold-icons: "{0: '🔴', 80: '🟠', 90: '🟢'}"
 
       - uses: actions/github-script@v8
         name: Prepare test result report
