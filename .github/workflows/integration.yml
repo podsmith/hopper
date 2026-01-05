@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - main
-      - release/*
+      - release/**
     types:
       - opened
       - reopened
@@ -256,7 +256,7 @@ jobs:
             const commitUrl = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}`;
 
             const json = JSON.parse(readFileSync('junit.json'));
-            const content = `## Test result
+            const content = `## ${json.success ? '✅' : '❌'} Test Suite ${json.success ? 'Passed' : 'Failed'}
 
             **Test suites**
 
@@ -269,9 +269,7 @@ jobs:
             |-------|--------|--------|---------|---------|---------|
             |   ${json.numTotalTests}    |    ${json.numPassedTests}    |    ${json.numFailedTests}    |    ${json.numPendingTests}     |    ${json.numTodoTests}     |    ${json.numTotalTests - json.numPassedTests - json.numFailedTests - json.numPendingTests - json.numTodoTests}     |
 
-            >  ${json.success ? '✅' : '❌'} Test suite ${json.success ? 'passed' : 'failed'}
-
-            Generated in workflow [#${GITHUB_RUN_NUMBER}](${runUrl}) for commit [${shortSha}](${commitUrl})
+            _Generated in workflow [#${GITHUB_RUN_NUMBER}](${runUrl}) for commit [${shortSha}](${commitUrl})_
             `;
 
             writeFileSync("result.md", content);
