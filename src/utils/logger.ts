@@ -1,6 +1,3 @@
-// oxlint-disable typescript/no-unsafe-assignment
-// oxlint-disable typescript/no-unsafe-return
-// oxlint-disable no-unsafe-member-access
 import { createLogger, format, transports } from 'winston';
 
 import { env } from '@/configs/environment';
