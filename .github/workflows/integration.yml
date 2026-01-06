@@ -190,6 +190,9 @@ jobs:
     runs-on: ubuntu-latest
 
     needs:
+      - code-quality
+      - pull-request-sanity
+      - code-sanity
       - database-check
 
     permissions:
