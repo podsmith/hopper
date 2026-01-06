@@ -5,7 +5,6 @@ const result = EnvironmentSchema.safeParse(process.env);
 
 /* c8 ignore start */
 if (result.error) {
-  // oxlint-disable-next-line no-console
   logger.error(
     'could not validate the environment variables for database connection',
     result.error,
