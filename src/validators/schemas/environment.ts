@@ -20,11 +20,16 @@ export const DatabaseEnvironmentSchema = z.object({
     .optional()
     .nullable()
     .transform((v) => v?.split(String.raw`\n`).join('\n')),
-  DB_LOG_VERBOSITY: z.enum(['all', 'error', 'none']).default('none'),
+  DB_LOGS_ENABLED: StringBooleanFieldSchema(
+    'Database query logging flag',
+  ).default(false),
+  DB_LOGS_PARAMETER_ENABLED: StringBooleanFieldSchema(
+    'Database query parameter logging flag',
+  ).default(false),
 });
 
 export const LoggingEnvironmentSchema = z.object({
-  LOG_SILENCE: StringBooleanFieldSchema('Log flag').default(false),
+  LOG_SILENCE: StringBooleanFieldSchema('Logging flag').default(false),
 });
 
 export const ServerEnvironmentSchema = z.object({

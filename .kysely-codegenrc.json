@@ -8,7 +8,7 @@
   "includePattern": null,
   "logLevel": "warn",
   "numericParser": "string",
-  "outFile": "src/shared/database/schema.ts",
+  "outFile": "src/database/schema.ts",
   "overrides": {},
   "partitions": true,
   "print": false,

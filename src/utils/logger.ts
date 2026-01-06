@@ -1,7 +1,5 @@
 import { createLogger, format, transports } from 'winston';
 
-import { env } from '@/configs/environment';
-
 const jsonLogFormat = format.combine(
   format.timestamp(),
   format.errors({ stack: true }),
@@ -11,7 +9,7 @@ const jsonLogFormat = format.combine(
 const consoleLogTransport = new transports.Console({
   format: jsonLogFormat,
   level: 'debug',
-  silent: env.LOG_SILENCE,
+  silent: process.env.LOG_SILENCE === 'true',
 });
 
 const logger = createLogger({
