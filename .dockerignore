@@ -1,0 +1,5 @@
+*
+!package*
+!tsconfig*
+!src/
+!bun.lock

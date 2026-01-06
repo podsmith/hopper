@@ -20,7 +20,7 @@ const result = DatabaseEnvironmentSchema.safeParse(process.env);
 /* c8 ignore start */
 if (result.error) {
   logger.error(
-    'Could not validate the environment variables for database connection',
+    'could not validate the environment variables for database connection',
     result.error,
   );
   // oxlint-disable-next-line no-process-exit - In case environment variables are not correct
@@ -55,32 +55,33 @@ export const kyselyConfig: KyselyConfig = {
     new CamelCasePlugin(),
     new DeduplicateJoinsPlugin(),
   ],
-  /* c8 ignore start */
-  log:
-    env.DB_LOG_VERBOSITY === 'none'
-      ? undefined
-      : (e) => {
-          const queryId = uuidv7();
-          const {
-            query: { sql, parameters },
-            queryDurationMillis,
-            level,
-          } = e;
+  log: env.DB_LOGS_ENABLED
+    ? (e) => {
+        const queryId = uuidv7();
+        const {
+          query: { sql, parameters },
+          queryDurationMillis,
+          level,
+        } = e;
 
-          logger.debug('Executed query executed by Kysely', {
+        if (level === 'error') {
+          logger.error('query failed to execute', {
             sql,
-            parameters: env.DB_LOG_VERBOSITY === 'all' ? parameters : undefined,
+            parameters: env.DB_LOGS_PARAMETER_ENABLED ? parameters : undefined,
             duration: queryDurationMillis,
-            key: 'db_query_executed',
+            key: 'db_query_failed',
             queryId,
           });
+          return;
+        }
 
-          if (level === 'error') {
-            logger.error('Kysely-executed query failed to executed', {
-              key: 'db_query_failed',
-              queryId,
-            });
-          }
-        },
-  /* c8 ignore end */
+        logger.debug('query executed', {
+          sql,
+          parameters: env.DB_LOGS_PARAMETER_ENABLED ? parameters : undefined,
+          duration: queryDurationMillis,
+          key: 'db_query_executed',
+          queryId,
+        });
+      }
+    : undefined,
 };

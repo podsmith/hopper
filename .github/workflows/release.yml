@@ -64,3 +64,25 @@ jobs:
           git push origin release/v${{ steps.bump.outputs.new_version }} -f --no-verify
         name: Create release branch
         if: ${{ steps.bump.outputs.old_version != steps.bump.outputs.new_version }}
+
+      - run: |
+          REVISION="v${{ steps.bump.outputs.new_version }}"
+          DOCKER_IMAGE_TAG="$DOCKER_REPOSITORY:$REVISION"
+
+          echo "::group::Build docker image"
+          docker buildx build \
+            --build-arg REVISION=$REVISION \
+            -t "$DOCKER_IMAGE_TAG" \
+            -f Dockerfile .
+          echo "::endgroup::"
+
+          echo "::group::List all images"
+          docker image ls
+          echo "::endgroup::"
+
+          echo "::group::Show full image details"
+          docker inspect $DOCKER_IMAGE_TAG
+          echo "::endgroup::"
+        name: Build the docker container image
+        env:
+          DOCKER_REPOSITORY: hopper
