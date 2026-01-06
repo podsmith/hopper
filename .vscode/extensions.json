@@ -5,6 +5,7 @@
     "esbenp.prettier-vscode",
     "redis.redis-for-vscode",
     "oven.bun-vscode",
-    "github.vscode-github-actions"
+    "github.vscode-github-actions",
+    "docker.docker"
   ]
 }
