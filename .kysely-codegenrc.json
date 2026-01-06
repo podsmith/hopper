@@ -1,0 +1,19 @@
+{
+  "camelCase": true,
+  "dateParser": "timestamp",
+  "defaultSchemas": ["public"],
+  "dialect": "postgres",
+  "domains": true,
+  "excludePattern": "*typeorm*",
+  "includePattern": null,
+  "logLevel": "warn",
+  "numericParser": "string",
+  "outFile": "src/shared/database/schema.ts",
+  "overrides": {},
+  "partitions": true,
+  "print": false,
+  "runtimeEnums": "pascal-case",
+  "singularize": true,
+  "typeOnlyImports": true,
+  "url": "env(DB_URL)"
+}

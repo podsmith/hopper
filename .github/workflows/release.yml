@@ -60,7 +60,7 @@ jobs:
         if: ${{ steps.bump.outputs.old_version != steps.bump.outputs.new_version }}
 
       - run: |
-          git checkout -b release/v${{ steps.bump.outputs.version }}
-          git push origin release/v${{ steps.bump.outputs.version }} -f --no-verify
+          git checkout -b release/v${{ steps.bump.outputs.new_version }}
+          git push origin release/v${{ steps.bump.outputs.new_version }} -f --no-verify
         name: Create release branch
         if: ${{ steps.bump.outputs.old_version != steps.bump.outputs.new_version }}
