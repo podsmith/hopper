@@ -291,23 +291,22 @@ jobs:
       - uses: actions/checkout@v6
         name: Checkout the code repository
 
-      - uses: docker/setup-docker-action@v4
-        name: Setup docker into the runner
-
       - run: |
           DOCKER_IMAGE_TAG="integration:v0.0.0"
 
-          echo ""
+          echo "::group::Build docker image"
           docker buildx build \
-            --progress=plain \
             --build-arg SERVER_PORT=$SERVER_PORT \
             --build-arg REVISION=$REVISION \
             -t "$DOCKER_IMAGE_TAG" \
             -f Dockerfile .
+          echo "::endgroup::"
 
-          echo ""
+          echo "::group::List all images"
           docker image ls
+          echo "::endgroup::"
 
-          echo ""
+          echo "::group::Show full image details"
           docker inspect $DOCKER_IMAGE_TAG
+          echo "::endgroup::"
         name: Build the docker container image
