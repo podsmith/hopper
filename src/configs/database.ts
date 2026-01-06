@@ -1,135 +1,86 @@
-import 'reflect-metadata';
-
-import path from 'node:path';
-
+import { SQL } from 'bun';
+import dotenv from 'dotenv-flow';
 import {
-  DefaultNamingStrategy,
-  type DataSourceOptions,
-  type NamingStrategyInterface,
-} from 'typeorm';
-import { snakeCase } from 'typeorm/util/StringUtils.js';
+  CamelCasePlugin,
+  DeduplicateJoinsPlugin,
+  HandleEmptyInListsPlugin,
+  replaceWithNoncontingentExpression,
+  type KyselyConfig,
+} from 'kysely';
+import { PostgresJSDialect } from 'kysely-postgres-js';
+import { v7 as uuidv7 } from 'uuid';
 
+import logger from '@/utils/logger';
 import { DatabaseEnvironmentSchema } from '@/validators/schemas/environment';
+
+dotenv.config({ purge_dotenv: true, silent: true });
 
 const result = DatabaseEnvironmentSchema.safeParse(process.env);
 
 /* c8 ignore start */
 if (result.error) {
-  // oxlint-disable-next-line no-console
-  console.error(result.error);
-  // oxlint-disable-next-line unicorn/no-process-exit
+  logger.error(
+    'Could not validate the environment variables for database connection',
+    result.error,
+  );
+  // oxlint-disable-next-line no-process-exit - In case environment variables are not correct
   process.exit(1);
 }
 /* c8 ignore end */
 
-const environment = result.data;
+export const env = result.data;
 
-/* c8 ignore start */
-class SnakeCaseNamingStrategy
-  extends DefaultNamingStrategy
-  implements NamingStrategyInterface
-{
-  tableName(targetName: string, userSpecifiedName: string | undefined) {
-    if (userSpecifiedName) {
-      return userSpecifiedName;
-    }
-
-    return snakeCase(targetName);
-  }
-
-  columnName(
-    propertyName: string,
-    customName: string | undefined,
-    embeddedPrefixes: string[],
-  ) {
-    return (
-      snakeCase([...embeddedPrefixes, ''].join('_')) +
-      (customName ?? snakeCase(propertyName))
-    );
-  }
-
-  relationName(propertyName: string) {
-    return snakeCase(propertyName);
-  }
-
-  joinColumnName(relationName: string, referencedColumnName: string) {
-    return snakeCase(`${relationName}_${referencedColumnName}`);
-  }
-
-  joinTableName(
-    firstTableName: string,
-    secondTableName: string,
-    firstPropertyName: string,
-  ) {
-    return snakeCase(
-      `${firstTableName}_${firstPropertyName.replaceAll('.', '_')}_${secondTableName}`,
-    );
-  }
-
-  joinTableColumnName(
-    tableName: string,
-    propertyName: string,
-    columnName?: string,
-  ) {
-    return snakeCase(`${tableName}_${columnName ?? propertyName}`);
-  }
-
-  classTableInheritanceParentColumnName(
-    parentTableName: string,
-    parentTableIdPropertyName: string,
-  ) {
-    return snakeCase(`${parentTableName}_${parentTableIdPropertyName}`);
-  }
-
-  eagerJoinRelationAlias(alias: string, propertyPath: string) {
-    return `${alias}_${propertyPath.replace('.', '_')}`;
-  }
-}
-/* c8 ignore end */
-
-const typeOrmDefaultOptions: DataSourceOptions = {
-  applicationName: environment.DB_APP_NAME,
-  type: 'postgres',
-  schema: 'public',
-  useUTC: true,
-  uuidExtension: 'pgcrypto',
-  installExtensions: true,
-  url: environment.DB_URL,
-  maxQueryExecutionTime: environment.DB_QUERY_TIMEOUT_MS,
-  connectTimeoutMS: environment.DB_CONN_TIMEOUT_MS,
-  poolSize: environment.DB_POOL_SIZE,
-  namingStrategy: new SnakeCaseNamingStrategy(),
-  logger: 'simple-console',
-  logging: environment.DB_LOGS_ENABLED,
-  entities: [
-    path.join(import.meta.dirname, '../database/entities/*.{js,ts}'),
-    path.join(import.meta.dirname, '../database/views/*.{js,ts}'),
-  ],
-  /* c8 ignore start */
-  ssl: environment.DB_SSL_CERTIFICATE
+const pool = new SQL({
+  adapter: 'postgres',
+  url: env.DB_URL,
+  max: env.DB_POOL_SIZE,
+  connectionTimeout: env.DB_CONN_TIMEOUT_MS,
+  bigint: true,
+  tls: env.DB_SSL_CERTIFICATE
     ? {
         rejectUnauthorized: true,
-        ca: environment.DB_SSL_CERTIFICATE,
+        ca: env.DB_SSL_CERTIFICATE,
       }
     : false,
+});
+
+export const kyselyConfig: KyselyConfig = {
+  dialect: new PostgresJSDialect({
+    postgres: pool,
+  }),
+  plugins: [
+    new HandleEmptyInListsPlugin({
+      strategy: replaceWithNoncontingentExpression,
+    }),
+    new CamelCasePlugin(),
+    new DeduplicateJoinsPlugin(),
+  ],
+  /* c8 ignore start */
+  log:
+    env.DB_LOG_VERBOSITY === 'none'
+      ? undefined
+      : (e) => {
+          const queryId = uuidv7();
+          const {
+            query: { sql, parameters },
+            queryDurationMillis,
+            level,
+          } = e;
+
+          logger.debug('Executed query executed by Kysely', {
+            sql,
+            parameters: env.DB_LOG_VERBOSITY === 'all' ? parameters : undefined,
+            duration: queryDurationMillis,
+            key: 'db_query_executed',
+            queryId,
+          });
+
+          if (level === 'error') {
+            logger.error('Kysely-executed query failed to executed', {
+              key: 'db_query_failed',
+              queryId,
+            });
+          }
+        },
   /* c8 ignore end */
-};
-
-export const typeOrmMigrationOptions: DataSourceOptions = {
-  ...typeOrmDefaultOptions,
-  migrations: [
-    path.join(import.meta.dirname, '../database/_migrations/*.{js,ts}'),
-  ],
-  migrationsTableName: 'typeorm_migration_references',
-  metadataTableName: 'typeorm_migration_meta',
-};
-
-export const typeOrmSeederOptions: DataSourceOptions = {
-  ...typeOrmDefaultOptions,
-  migrations: [
-    path.join(import.meta.dirname, '../database/_seeders/*.{js,ts}'),
-  ],
-  migrationsTableName: 'typeorm_seeder_references',
-  metadataTableName: 'typeorm_seeder_meta',
-  migrationsTransactionMode: 'each',
 };

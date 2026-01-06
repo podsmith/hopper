@@ -14,15 +14,13 @@ export const DatabaseEnvironmentSchema = z.object({
     .trim()
     .nonempty(),
   DB_POOL_SIZE: z.coerce.number().int().min(1).default(20),
-  DB_APP_NAME: z.coerce.string().min(4).default('application'),
-  DB_QUERY_TIMEOUT_MS: z.coerce.number().int().min(1).default(5000),
   DB_CONN_TIMEOUT_MS: z.coerce.number().int().min(1).default(10_000),
   DB_SSL_CERTIFICATE: z
     .string()
     .optional()
     .nullable()
     .transform((v) => v?.split(String.raw`\n`).join('\n')),
-  DB_LOGS_ENABLED: StringBooleanFieldSchema('Database log flag').default(false),
+  DB_LOG_VERBOSITY: z.enum(['all', 'error', 'none']).default('none'),
 });
 
 export const LoggingEnvironmentSchema = z.object({

@@ -261,13 +261,6 @@ jobs:
             const json = JSON.parse(readFileSync('junit.json'));
             const content = `## ${json.success ? '✅' : '❌'} Test Suite ${json.success ? 'Passed' : 'Failed'}
 
-            **Test suites**
-
-            | Total | Passed | Failed | Pending |
-            |-------|--------|--------|---------|
-            |   ${json.numTotalTestSuites}    |    ${json.numPassedTestSuites}    |    ${json.numFailedTestSuites}    |    ${json.numPendingTestSuites}     |
-
-            **Tests**
             | Total | Passed | Failed | Pending | Todo | Skipped |
             |-------|--------|--------|---------|---------|---------|
             |   ${json.numTotalTests}    |    ${json.numPassedTests}    |    ${json.numFailedTests}    |    ${json.numPendingTests}     |    ${json.numTodoTests}     |    ${json.numTotalTests - json.numPassedTests - json.numFailedTests - json.numPendingTests - json.numTodoTests}     |

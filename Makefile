@@ -1,6 +1,6 @@
 # variables
 TYPEORM:=bun run node_modules/typeorm/cli.js
-TYPEORM_MIGRATION_CONFIG_FILE:=src/database/source.ts
+TYPEORM_MIGRATION_CONFIG_FILE:=src/database/_migration.ts
 TYPEORM_SEED_CONFIG_FILE:=src/database/_seeder.ts
 TYPEORM_MIGRATION_DIR:=src/database/_migrations
 TYPEORM_SEED_DIR:=src/database/_seeders
@@ -62,3 +62,7 @@ test:
 test\:coverage:
 	@bun run tests/setup/test.global.setup.ts
 	@bunx vitest --coverage
+
+# introspect types from database
+db\:types\:generate:
+	@bunx kysely-codegen

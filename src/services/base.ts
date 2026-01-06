@@ -1,14 +1,14 @@
 import type { Redis } from 'ioredis';
-import type { EntityManager } from 'typeorm';
 
 import { redis } from '@/configs/redis';
-import dataSource from '@/database/source';
+import { dbConn } from '@/database/connection';
+import type { DatabaseConnection } from '@/types/utils';
 
 export abstract class BaseService {
-  db: EntityManager;
+  db: DatabaseConnection;
   cache: Redis;
 
-  constructor(db: EntityManager = dataSource.manager, cache: Redis = redis) {
+  constructor(db: DatabaseConnection = dbConn, cache: Redis = redis) {
     this.db = db;
     this.cache = cache;
   }
