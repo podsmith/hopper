@@ -25,9 +25,6 @@ export const StringBooleanFieldSchema = (label = 'Flag') =>
     .string(ErrorMessage.Fields.KeyMustBeValidT(label, 'string'))
     .trim()
     .lowercase()
-    .refine((v) =>
-      ['true', 'yes', 'y', '1', 'false', 'no', 'n', '0'].includes(v),
-    )
     .transform((v) => ['true', 'yes', 'y', '1'].includes(v));
 
 export const TimestampFieldSchema = (label = 'Timestamp') =>

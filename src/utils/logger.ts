@@ -1,5 +1,7 @@
 import { createLogger, format, transports } from 'winston';
 
+import { StringBooleanFieldSchema } from '@/validators/common/field';
+
 const jsonLogFormat = format.combine(
   format.timestamp(),
   format.errors({ stack: true }),
@@ -9,7 +11,9 @@ const jsonLogFormat = format.combine(
 const consoleLogTransport = new transports.Console({
   format: jsonLogFormat,
   level: 'debug',
-  silent: process.env.LOG_SILENCE === 'true',
+  silent: StringBooleanFieldSchema('Log silence flag').parse(
+    process.env.LOG_SILENCE,
+  ),
 });
 
 const logger = createLogger({
