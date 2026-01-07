@@ -1,4 +1,4 @@
-FROM oven/bun:alpine AS build
+FROM oven/bun AS build
 
 WORKDIR /app
 
@@ -35,8 +35,8 @@ ENV SERVER_PORT=$SERVER_PORT \
   NODE_ENV=production \
   TZ=UTC
 
-COPY --from=build /app/server server
+COPY --from=build /app/server /app/server
 
 EXPOSE ${SERVER_PORT}
 
-CMD ["./server"]
+CMD ["/app/server"]
