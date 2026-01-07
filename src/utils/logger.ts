@@ -1,6 +1,25 @@
+// oxlint-disable typescript/no-unsafe-assignment
+// oxlint-disable typescript/no-unsafe-return
+// oxlint-disable no-unsafe-member-access
 import { createLogger, format, transports } from 'winston';
 
 import { StringBooleanFieldSchema } from '@/validators/common/field';
+
+Object.defineProperty(Error.prototype, 'toJSON', {
+  value: function () {
+    // oxlint-disable-next-line prefer-object-spread
+    return Object.assign({}, this, {
+      error: {
+        name: this.name,
+        message: this.message,
+        stack: this.stack,
+        issues: this?.issues,
+      },
+    });
+  },
+  writable: false,
+  configurable: false,
+});
 
 const jsonLogFormat = format.combine(
   format.timestamp(),
