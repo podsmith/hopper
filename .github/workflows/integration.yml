@@ -303,6 +303,9 @@ jobs:
       - run: |
           echo "::group::Start the docker image using compose"
           docker compose up -d
+          echo "::endgroup::"
+
+          echo "::group::Check the running containers"
           sleep 5
           docker ps
           echo "::endgroup::"
