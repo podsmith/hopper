@@ -66,6 +66,8 @@ export const server = new Hono()
 
     if (status >= HttpStatus.InternalServerError) {
       logger.error(message, { error, status });
+    } else {
+      logger.debug(message, { error, status });
     }
 
     return c.json(

@@ -26,7 +26,7 @@ env:
 
   LOG_SILENCE: false
 
-  SERVER_PORT: 8001
+  SERVER_PORT: 8080
   SERVER_TIMING_DEBUG: false
   SERVER_TIMEOUT_MS: 30000
   SERVER_MAX_BODY_SIZE_KB: 256
@@ -282,26 +282,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         name: Checkout the code repository
-
-      - run: |
-          DOCKER_IMAGE_TAG="integration:v0.0.0"
-
-          echo "::group::Build docker image"
-          docker buildx build \
-            --build-arg SERVER_PORT=$SERVER_PORT \
-            --build-arg REVISION=$REVISION \
-            -t "$DOCKER_IMAGE_TAG" \
-            -f Dockerfile .
-          echo "::endgroup::"
-
-          echo "::group::List all images"
-          docker image ls
-          echo "::endgroup::"
-
-          echo "::group::Show full image details"
-          docker inspect $DOCKER_IMAGE_TAG
-          echo "::endgroup::"
-        name: Build the docker container image
 
       - run: |
           echo "::group::Start the docker image using compose"
