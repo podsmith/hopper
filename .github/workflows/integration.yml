@@ -301,27 +301,7 @@ jobs:
         name: Build the docker container image
 
       - run: |
-          DOCKER_IMAGE_TAG="integration:v0.0.0"
-
-          echo "::group::Build docker image"
-          docker buildx build \
-            --build-arg SERVER_PORT=$SERVER_PORT \
-            --build-arg REVISION=$REVISION \
-            -t "$DOCKER_IMAGE_TAG" \
-            -f Dockerfile .
-          echo "::endgroup::"
-
-          echo "::group::List all images"
-          docker image ls
-          echo "::endgroup::"
-
-          echo "::group::Show full image details"
-          docker inspect $DOCKER_IMAGE_TAG
-          echo "::endgroup::"
-        name: Build the docker container image
-
-      - run: |
-          echo "::group::Build docker image"
+          echo "::group::Start the docker image using compose"
           docker compose up -d
           sleep 5
           docker ps
