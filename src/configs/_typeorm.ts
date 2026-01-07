@@ -22,7 +22,7 @@ if (result.error) {
 }
 /* c8 ignore end */
 
-const environment = result.data;
+const env = result.data;
 
 /* c8 ignore start */
 class SnakeCaseNamingStrategy
@@ -93,21 +93,21 @@ const typeOrmDefaultOptions: DataSourceOptions = {
   useUTC: true,
   uuidExtension: 'pgcrypto',
   installExtensions: true,
-  url: environment.DB_URL,
-  connectTimeoutMS: environment.DB_CONN_TIMEOUT_MS,
-  poolSize: environment.DB_POOL_SIZE,
+  url: env.DB_URL,
+  connectTimeoutMS: env.DB_CONN_TIMEOUT_MS,
+  poolSize: env.DB_POOL_SIZE,
   namingStrategy: new SnakeCaseNamingStrategy(),
   logger: 'simple-console',
-  logging: true,
+  logging: env.DB_LOGS_ENABLED,
   entities: [
     path.join(import.meta.dirname, '../database/_entities/*.{js,ts}'),
     path.join(import.meta.dirname, '../database/_views/*.{js,ts}'),
   ],
   /* c8 ignore start */
-  ssl: environment.DB_SSL_CERTIFICATE
+  ssl: env.DB_SSL_CERTIFICATE
     ? {
         rejectUnauthorized: true,
-        ca: environment.DB_SSL_CERTIFICATE,
+        ca: env.DB_SSL_CERTIFICATE,
       }
     : false,
   /* c8 ignore end */

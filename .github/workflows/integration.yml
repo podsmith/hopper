@@ -142,6 +142,9 @@ jobs:
     name: Check database and entity sanity
     runs-on: ubuntu-latest
 
+    env:
+      DB_LOGS_ENABLED: true
+
     services:
       postgres:
         image: postgres:18.1-alpine

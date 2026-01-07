@@ -12,4 +12,4 @@ const setup = async () => {
   await seederDataSource.destroy();
 };
 
-export default setup;
+await setup();
