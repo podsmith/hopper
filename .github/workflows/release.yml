@@ -84,5 +84,6 @@ jobs:
           docker inspect $DOCKER_IMAGE_TAG
           echo "::endgroup::"
         name: Build the docker container image
+        if: ${{ steps.bump.outputs.old_version != steps.bump.outputs.new_version }}
         env:
           DOCKER_REPOSITORY: hopper

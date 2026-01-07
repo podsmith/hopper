@@ -21,8 +21,6 @@ env:
 
   DB_URL: 'postgresql://user:PasswordSAMPLE@localhost:5432/hopper'
   DB_POOL_SIZE: 40
-  DB_APP_NAME: integration
-  DB_QUERY_TIMEOUT_MS: 10000
   DB_CONN_TIMEOUT_MS: 30000
   DB_LOGS_ENABLED: false
 
@@ -301,3 +299,41 @@ jobs:
           docker inspect $DOCKER_IMAGE_TAG
           echo "::endgroup::"
         name: Build the docker container image
+
+      - run: |
+          DOCKER_IMAGE_TAG="integration:v0.0.0"
+
+          echo "::group::Build docker image"
+          docker buildx build \
+            --build-arg SERVER_PORT=$SERVER_PORT \
+            --build-arg REVISION=$REVISION \
+            -t "$DOCKER_IMAGE_TAG" \
+            -f Dockerfile .
+          echo "::endgroup::"
+
+          echo "::group::List all images"
+          docker image ls
+          echo "::endgroup::"
+
+          echo "::group::Show full image details"
+          docker inspect $DOCKER_IMAGE_TAG
+          echo "::endgroup::"
+        name: Build the docker container image
+
+      - run: |
+          echo "::group::Build docker image"
+          docker compose up -d
+          sleep 5
+          docker ps
+          echo "::endgroup::"
+
+          echo "::group::Ping the application server health endpoint"
+          mkdir -p out
+          curl -s -v -o out/response.json http://localhost:8080/api/v1/health
+          echo "::endgroup::"
+
+          echo "::group::Check the health status of the application"
+          jq . out/response.json
+          grep -i "isHealthy" out/response.json
+          echo "::endgroup::"
+        name: Run the image using docker compose
