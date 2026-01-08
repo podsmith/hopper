@@ -303,3 +303,19 @@ jobs:
           grep -i "isHealthy" out/response.json
           echo "::endgroup::"
         name: Run the image using docker compose
+
+  guard:
+    name: Pull request validation guard
+    runs-on: ubuntu-latest
+
+    needs:
+      - code-quality
+      - pull-request-sanity
+      - code-sanity
+      - database-check
+      - test
+      - containerize
+
+    steps:
+      - run: echo "✅ all necessary checks passed"
+        name: Success notification
