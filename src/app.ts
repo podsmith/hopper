@@ -22,7 +22,7 @@ import logger from '@/utils/logger';
 // ============================== all the routers are to be mentioned here
 const router = new Hono().route('', healthRoutes);
 
-export const server = new Hono()
+export const app = new Hono()
   // ============================== the following middlewares are common for all routes
   .use(cors({ origin: env.SERVER_CORS_ORIGIN, credentials: true }))
   .use(etag())
@@ -65,7 +65,9 @@ export const server = new Hono()
     const { status, details, stack, message } = formatErrorResponse(error);
 
     if (status >= HttpStatus.InternalServerError) {
-      logger.error(message, { error, status });
+      logger.error(message, { error, status, stack });
+    } else {
+      logger.debug(message, { error, status, stack });
     }
 
     return c.json(

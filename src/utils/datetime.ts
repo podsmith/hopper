@@ -14,9 +14,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 
 dayjs.extend(isSameOrAfter);
-
 dayjs.extend(isSameOrBefore);
-
 dayjs.extend(isToday);
 dayjs.extend(isYesterday);
 dayjs.extend(isTomorrow);
