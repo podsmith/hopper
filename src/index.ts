@@ -1,11 +1,11 @@
 import type { Server } from 'bun';
 
+import { app } from '@/app';
 import { env } from '@/configs/environment';
-import { server } from '@/server';
 
-const app: Partial<Server<unknown>> = {
+const server: Partial<Server<unknown>> = {
   port: env.SERVER_PORT,
-  fetch: server.fetch,
+  fetch: app.fetch,
 };
 
-export default app;
+export default server;
