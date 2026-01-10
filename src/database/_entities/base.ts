@@ -2,16 +2,12 @@ import {
   BaseEntity,
   CreateDateColumn,
   DeleteDateColumn,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-export abstract class BaseSerialEntity extends BaseEntity {
-  /**
-   * The `bigint` in PostgreSQL is out of range for NodeJS `number`.
-   * Hence, `pg` parses it as `string`.
-   */
-  @PrimaryGeneratedColumn({ type: 'bigint' })
+export abstract class BaseUuidEntity extends BaseEntity {
+  @PrimaryColumn({ type: 'uuid', default: () => 'uuidv7()' })
   id!: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
