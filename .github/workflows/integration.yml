@@ -197,9 +197,9 @@ jobs:
 
           echo "::group::Prepare"
           make db:types:generate
-          git diff --name-status $FILE_NAME | grep -i $FILE_NAME || exit 0
           npm run format:fix
           npm run lint:fix
+          git diff --name-status $FILE_NAME | grep -i $FILE_NAME || exit 0
           echo "::endgroup::"
 
           echo "::group::Check content different"
