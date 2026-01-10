@@ -71,7 +71,13 @@ export const app = new Hono()
     }
 
     return c.json(
-      { message, details, stack: env.SERVER_ERROR_DEBUG ? stack : undefined },
+      {
+        message,
+        details,
+        stack: env.SERVER_ERROR_DEBUG
+          ? stack
+          : /* istanbul ignore next -- @preserve */ undefined,
+      },
       // oxlint-disable-next-line no-unsafe-type-assertion
       status as ContentfulStatusCode,
     );

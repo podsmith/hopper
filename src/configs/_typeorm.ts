@@ -14,7 +14,7 @@ import { DatabaseEnvironmentSchema } from '@/validators/schemas/environment';
 
 const result = DatabaseEnvironmentSchema.safeParse(process.env);
 
-/* c8 ignore start */
+/* istanbul ignore next */
 if (result.error) {
   logger.error(
     'could not validate the environment variables for database connection',
@@ -23,11 +23,9 @@ if (result.error) {
   // oxlint-disable-next-line unicorn/no-process-exit
   process.exit(1);
 }
-/* c8 ignore end */
 
 const env = result.data;
 
-/* c8 ignore start */
 class SnakeCaseNamingStrategy
   extends DefaultNamingStrategy
   implements NamingStrategyInterface
@@ -88,7 +86,6 @@ class SnakeCaseNamingStrategy
     return `${alias}_${propertyPath.replace('.', '_')}`;
   }
 }
-/* c8 ignore end */
 
 const typeOrmDefaultOptions: DataSourceOptions = {
   type: 'postgres',
@@ -106,14 +103,12 @@ const typeOrmDefaultOptions: DataSourceOptions = {
     path.join(import.meta.dirname, '../database/_entities/*.{js,ts}'),
     path.join(import.meta.dirname, '../database/_views/*.{js,ts}'),
   ],
-  /* c8 ignore start */
   ssl: env.DB_SSL_CERTIFICATE
     ? {
         rejectUnauthorized: true,
         ca: env.DB_SSL_CERTIFICATE,
       }
     : false,
-  /* c8 ignore end */
 };
 
 export const typeOrmMigrationOptions: DataSourceOptions = {

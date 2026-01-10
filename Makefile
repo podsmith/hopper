@@ -55,13 +55,13 @@ seeder\:revert:
 
 # run test suites
 test:
-	@bun run tests/setup/test.global.setup.ts
-	@bunx vitest
+	@DB_LOGS_ENABLED=false bun run tests/setup/test.global.setup.ts
+	@bunx --bun vitest run
 
 # run test suites and collect coverage
 test\:coverage:
-	@bun run tests/setup/test.global.setup.ts
-	@bunx vitest --coverage
+	@DB_LOGS_ENABLED=false bun run tests/setup/test.global.setup.ts
+	@bunx --bun vitest run --coverage
 
 # introspect types from database
 db\:types\:generate:

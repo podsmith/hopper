@@ -1,9 +1,12 @@
 // oxlint-disable typescript/no-unsafe-assignment
 // oxlint-disable typescript/no-unsafe-return
 // oxlint-disable no-unsafe-member-access
+import dotenv from 'dotenv-flow';
 import { createLogger, format, transports } from 'winston';
 
 import { StringBooleanFieldSchema } from '@/validators/common/field';
+
+dotenv.config({ purge_dotenv: true, silent: true });
 
 Object.defineProperty(Error.prototype, 'toJSON', {
   value: function () {

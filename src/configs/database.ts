@@ -17,7 +17,7 @@ dotenv.config({ purge_dotenv: true, silent: true });
 
 const result = DatabaseEnvironmentSchema.safeParse(process.env);
 
-/* c8 ignore start */
+/* istanbul ignore if -- @preserve */
 if (result.error) {
   logger.error(
     'could not validate the environment variables for database connection',
@@ -26,7 +26,6 @@ if (result.error) {
   // oxlint-disable-next-line no-process-exit - In case environment variables are not correct
   process.exit(1);
 }
-/* c8 ignore end */
 
 export const env = result.data;
 
@@ -37,7 +36,8 @@ const pool = new SQL({
   connectionTimeout: env.DB_CONN_TIMEOUT_MS,
   bigint: true,
   tls: env.DB_SSL_CERTIFICATE
-    ? {
+    ? /* istanbul ignore next -- @preserve */
+      {
         rejectUnauthorized: true,
         ca: env.DB_SSL_CERTIFICATE,
       }
@@ -56,7 +56,7 @@ export const kyselyConfig: KyselyConfig = {
     new DeduplicateJoinsPlugin(),
   ],
   log: env.DB_LOGS_ENABLED
-    ? (e) => {
+    ? /* istanbul ignore next -- @preserve */ (e) => {
         const queryId = uuidv7();
         const {
           query: { sql, parameters },
