@@ -9,7 +9,6 @@ describe('utilities to process query strings', () => {
 
   it('trying to decode the query string should result in correct data', () => {
     expect(decode('a=1&b=2')).toEqual({ a: '1', b: '2' });
-    // oxlint-disable-next-line no-null
     expect(decode(null)).toEqual({});
   });
 });
