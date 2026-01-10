@@ -347,7 +347,10 @@
   },
   "overrides": [
     {
-      "files": ["src/database/_migrations/*.ts", "src/database/_seeders/*.ts"],
+      "files": [
+        "src/database/_typeorm/migrations/*.ts",
+        "src/database/_typeorm/seeders/*.ts"
+      ],
       "rules": {
         "max-lines-per-function": "off",
         "max-lines": "off"

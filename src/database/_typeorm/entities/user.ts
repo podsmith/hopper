@@ -7,8 +7,8 @@ import {
   type Relation,
 } from 'typeorm';
 
-import { BaseUuidEntity } from '@/database/_entities/base';
-import { UserRole } from '@/database/_entities/user-role';
+import { BaseUuidEntity } from '@/database/_typeorm/entities/base';
+import { UserRole } from '@/database/_typeorm/entities/user-role';
 
 @Entity('users')
 @Check('char_length(first_name) > 0')

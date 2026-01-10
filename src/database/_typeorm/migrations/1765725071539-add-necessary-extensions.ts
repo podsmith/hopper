@@ -1,7 +1,7 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddNecessaryExtensions1765727076539 implements MigrationInterface {
-  extensions = ['citext'];
+  extensions = ['citext', 'pgcrypto'];
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     const extentionQuery = this.extensions

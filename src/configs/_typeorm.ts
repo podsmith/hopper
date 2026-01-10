@@ -100,8 +100,8 @@ const typeOrmDefaultOptions: DataSourceOptions = {
   logger: 'simple-console',
   logging: env.DB_LOGS_ENABLED,
   entities: [
-    path.join(import.meta.dirname, '../database/_entities/*.{js,ts}'),
-    path.join(import.meta.dirname, '../database/_views/*.{js,ts}'),
+    path.join(import.meta.dirname, '../database/_typeorm/entities/*.{js,ts}'),
+    path.join(import.meta.dirname, '../database/_typeorm/views/*.{js,ts}'),
   ],
   ssl: env.DB_SSL_CERTIFICATE
     ? {
@@ -114,7 +114,7 @@ const typeOrmDefaultOptions: DataSourceOptions = {
 export const typeOrmMigrationOptions: DataSourceOptions = {
   ...typeOrmDefaultOptions,
   migrations: [
-    path.join(import.meta.dirname, '../database/_migrations/*.{js,ts}'),
+    path.join(import.meta.dirname, '../database/_typeorm/migrations/*.{js,ts}'),
   ],
   migrationsTableName: 'typeorm_migration_references',
   metadataTableName: 'typeorm_migration_meta',
@@ -123,7 +123,7 @@ export const typeOrmMigrationOptions: DataSourceOptions = {
 export const typeOrmSeederOptions: DataSourceOptions = {
   ...typeOrmDefaultOptions,
   migrations: [
-    path.join(import.meta.dirname, '../database/_seeders/*.{js,ts}'),
+    path.join(import.meta.dirname, '../database/_typeorm/seeders/*.{js,ts}'),
   ],
   migrationsTableName: 'typeorm_seeder_references',
   metadataTableName: 'typeorm_seeder_meta',

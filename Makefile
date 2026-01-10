@@ -1,9 +1,9 @@
 # variables
 TYPEORM:=bun run node_modules/typeorm/cli.js
-TYPEORM_MIGRATION_CONFIG_FILE:=src/database/_migration.ts
-TYPEORM_SEED_CONFIG_FILE:=src/database/_seeder.ts
-TYPEORM_MIGRATION_DIR:=src/database/_migrations
-TYPEORM_SEED_DIR:=src/database/_seeders
+TYPEORM_MIGRATION_CONFIG_FILE:=src/database/_typeorm/data-source.ts
+TYPEORM_SEED_CONFIG_FILE:=src/database/_typeorm/seed-data-source.ts
+TYPEORM_MIGRATION_DIR:=src/database/_typeorm/migrations
+TYPEORM_SEED_DIR:=src/database/_typeorm/seeders
 
 # generate a new migration
 migration\:generate:
