@@ -48,7 +48,7 @@ services:
       SERVER_PORT: 8080
       SERVER_TIMING_DEBUG: false
       SERVER_TIMEOUT_MS: 5000
-      SERVER_MAX_BODY_SIZE_KB: 256
+      SERVER_MAX_BODY_SIZE_KB: 128
       SERVER_CORS_ORIGIN: example.com
       SERVER_ERROR_DEBUG: false
       REDIS_URL: 'redis://redis:6379/0'

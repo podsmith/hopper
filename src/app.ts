@@ -1,3 +1,4 @@
+import { randomUUIDv7 } from 'bun';
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { cors } from 'hono/cors';
@@ -9,7 +10,6 @@ import { timeout } from 'hono/timeout';
 import { timing } from 'hono/timing';
 import { trimTrailingSlash } from 'hono/trailing-slash';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
-import { v7 as uuid7 } from 'uuid';
 
 import { env } from '@/configs/environment';
 import { APIVersion } from '@/constants/api-route';
@@ -28,7 +28,7 @@ export const app = new Hono()
   .use(etag())
   .use(secureHeaders())
   .use(trimTrailingSlash())
-  .use(requestId({ generator: () => uuid7() }))
+  .use(requestId({ generator: () => randomUUIDv7() }))
   .use(timing({ enabled: env.SERVER_TIMING_DEBUG }))
   .use(
     timeout(

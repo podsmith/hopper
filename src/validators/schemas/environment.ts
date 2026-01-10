@@ -40,7 +40,7 @@ export const ServerEnvironmentSchema = z.object({
   SERVER_MAX_BODY_SIZE_KB: z.coerce
     .number()
     .positive()
-    .default(100)
+    .default(128)
     .transform((v) => v * 1024),
   SERVER_CORS_ORIGIN: z
     .string()

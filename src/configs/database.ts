@@ -1,4 +1,4 @@
-import { SQL } from 'bun';
+import { randomUUIDv7, SQL } from 'bun';
 import dotenv from 'dotenv-flow';
 import {
   CamelCasePlugin,
@@ -8,7 +8,6 @@ import {
   type KyselyConfig,
 } from 'kysely';
 import { PostgresJSDialect } from 'kysely-postgres-js';
-import { v7 as uuidv7 } from 'uuid';
 
 import logger from '@/utils/logger';
 import { DatabaseEnvironmentSchema } from '@/validators/schemas/environment';
@@ -57,7 +56,7 @@ export const kyselyConfig: KyselyConfig = {
   ],
   log: env.DB_LOGS_ENABLED
     ? /* istanbul ignore next -- @preserve */ (e) => {
-        const queryId = uuidv7();
+        const queryId = randomUUIDv7();
         const {
           query: { sql, parameters },
           queryDurationMillis,
