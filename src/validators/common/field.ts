@@ -81,13 +81,31 @@ export const ListSortKeyFieldSchema = (
 
 export const PhoneNumberFieldSchema = (label = 'Phone number') =>
   z.coerce
-    .string()
-    .min(8, ErrorMessage.Fields.KeyMustHaveMinLength('Phone number', 8))
-    .max(16, ErrorMessage.Fields.KeyMustHaveMaxLength('Phone number', 16))
+    .string(ErrorMessage.Fields.KeyMustBeValidT(label, 'string'))
+    .min(8, ErrorMessage.Fields.KeyMustHaveMinLength(label, 8))
+    .max(16, ErrorMessage.Fields.KeyMustHaveMaxLength(label, 16))
     .regex(
       RegEx.PhoneNumberE164,
       ErrorMessage.Fields.KeyMustBeValidT(
         label,
         'phone number with E.164 format',
       ),
+    );
+
+export const PersonNameFieldSchema = (label = 'Name') =>
+  z
+    .string(ErrorMessage.Fields.KeyMustBeValidT(label, 'string'))
+    .trim()
+    .regex(
+      RegEx.PersonName,
+      ErrorMessage.Fields.KeyMustBeValidT(label, 'string'),
+    );
+
+export const UtilityNameFieldSchema = (label = 'Name') =>
+  z
+    .string(ErrorMessage.Fields.KeyMustBeValidT(label, 'string'))
+    .trim()
+    .regex(
+      RegEx.UtilityName,
+      ErrorMessage.Fields.KeyMustBeValidT(label, 'string'),
     );
