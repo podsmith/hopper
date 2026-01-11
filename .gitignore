@@ -123,3 +123,4 @@ build
 # Test result
 coverage
 junit*
+*.ignore.*

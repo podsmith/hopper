@@ -10,43 +10,31 @@ export type Generated<T> =
     ? ColumnType<S, I | undefined, U>
     : ColumnType<T, T | undefined, T>;
 
-export type Int8 = ColumnType<
-  string,
-  bigint | number | string,
-  bigint | number | string
->;
-
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
-export interface City {
+export interface UserRole {
   createdAt: Generated<Timestamp>;
   deletedAt: Timestamp | null;
-  id: Generated<Int8>;
-  name: string;
-  stateId: Int8;
-  updatedAt: Generated<Timestamp>;
-}
-
-export interface Country {
-  createdAt: Generated<Timestamp>;
-  deletedAt: Timestamp | null;
-  id: Generated<Int8>;
-  iso3: string;
+  id: Generated<string>;
   name: string;
   updatedAt: Generated<Timestamp>;
 }
 
-export interface State {
-  countryId: Int8;
+export interface User {
   createdAt: Generated<Timestamp>;
   deletedAt: Timestamp | null;
-  id: Generated<Int8>;
-  name: string;
+  email: string;
+  firstName: string;
+  id: Generated<string>;
+  imageKey: string | null;
+  isRoot: Generated<boolean>;
+  lastName: string;
+  phone: string;
+  roleId: string;
   updatedAt: Generated<Timestamp>;
 }
 
 export interface DB {
-  cities: City;
-  countries: Country;
-  states: State;
+  userRoles: UserRole;
+  users: User;
 }

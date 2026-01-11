@@ -29,7 +29,7 @@ env:
   SERVER_PORT: 8080
   SERVER_TIMING_DEBUG: false
   SERVER_TIMEOUT_MS: 30000
-  SERVER_MAX_BODY_SIZE_KB: 256
+  SERVER_MAX_BODY_SIZE_KB: 128
   SERVER_CORS_ORIGIN: example.com
   SERVER_ERROR_DEBUG: false
 
@@ -169,9 +169,13 @@ jobs:
 
       - run: make migration:apply
         name: Apply all pending migrations
+        env:
+          DB_LOGS_ENABLED: 1
 
       - run: make seeder:apply
         name: Apply all pending seeders
+        env:
+          DB_LOGS_ENABLED: 1
 
       - run: |
           set +e
@@ -185,6 +189,29 @@ jobs:
             exit 1
           fi
         name: Evaluate database schema deviation
+        env:
+          DB_LOGS_ENABLED: 1
+
+      - run: |
+          FILE_NAME="src/database/schema.ts"
+
+          echo "::group::Prepare"
+          make db:types:generate
+          npm run format:fix
+          npm run lint:fix
+          git diff --name-status $FILE_NAME | grep -i $FILE_NAME || exit 0
+          echo "::endgroup::"
+
+          echo "::group::Check content different"
+          git diff $FILE_NAME
+          echo "::endgroup::"
+
+          echo "::group::Check updated content"
+          cat $FILE_NAME
+          echo "::endgroup::"
+
+          exit 1
+        name: Check proper types generated for database
 
   test:
     name: Run tests and report

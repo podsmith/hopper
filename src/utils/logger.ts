@@ -1,9 +1,12 @@
 // oxlint-disable typescript/no-unsafe-assignment
 // oxlint-disable typescript/no-unsafe-return
 // oxlint-disable no-unsafe-member-access
+import dotenv from 'dotenv-flow';
 import { createLogger, format, transports } from 'winston';
 
 import { StringBooleanFieldSchema } from '@/validators/common/field';
+
+dotenv.config({ purge_dotenv: true, silent: true });
 
 Object.defineProperty(Error.prototype, 'toJSON', {
   value: function () {
@@ -30,9 +33,7 @@ const jsonLogFormat = format.combine(
 const consoleLogTransport = new transports.Console({
   format: jsonLogFormat,
   level: 'debug',
-  silent: StringBooleanFieldSchema('Log silence flag').parse(
-    process.env.LOG_SILENCE,
-  ),
+  silent: StringBooleanFieldSchema('Log silence flag').parse(process.env.LOG_SILENCE),
 });
 
 const logger = createLogger({

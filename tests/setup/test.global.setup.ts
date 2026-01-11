@@ -1,5 +1,5 @@
-import dataSource from '@/database/_migration';
-import seederDataSource from '@/database/_seeder';
+import dataSource from '@/database/_typeorm/data-source';
+import seederDataSource from '@/database/_typeorm/seed-data-source';
 
 const setup = async () => {
   await dataSource.initialize();

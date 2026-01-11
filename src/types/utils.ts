@@ -9,9 +9,7 @@ export type FlatNestedPrimitiveRecord = Record<
   string,
   FlatPrimitiveRecord | FlatPrimitiveRecord[] | Primitive | Primitive[]
 >;
-export type ObjectType =
-  | FlatNestedPrimitiveRecord
-  | FlatNestedPrimitiveRecord[];
+export type ObjectType = FlatNestedPrimitiveRecord | FlatNestedPrimitiveRecord[];
 export type InferZodOrNull<T> = T extends z.ZodType ? z.infer<T> : null;
 export type NonEmptyArray<T> = [T, ...T[]];
 export type DatabaseConnection = KyselyTransaction<DB> | Kysely<DB>;

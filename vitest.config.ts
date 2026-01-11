@@ -11,9 +11,9 @@ export default defineConfig({
     bail: 1,
     coverage: {
       clean: true,
-      exclude: ['**/*.d.ts', '**/_*/**', 'src/index.ts', 'src/types'],
+      exclude: ['**/*.d.ts', '**/_*', '**/_*/**', 'src/index.ts', 'src/types'],
       include: ['src/**'],
-      provider: 'v8',
+      provider: 'istanbul',
       reporter: ['text', 'html', 'cobertura', 'json', 'json-summary'],
       reportOnFailure: true,
       reportsDirectory: 'coverage',

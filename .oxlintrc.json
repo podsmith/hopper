@@ -5,24 +5,8 @@
     "es2026": true,
     "node": true
   },
-  "ignorePatterns": [
-    "build/",
-    "coverage/",
-    "node_modules/",
-    "logs/",
-    "*.mjs",
-    "*.cjs"
-  ],
-  "plugins": [
-    "typescript",
-    "unicorn",
-    "import",
-    "oxc",
-    "eslint",
-    "node",
-    "promise",
-    "vitest"
-  ],
+  "ignorePatterns": ["build/", "coverage/", "node_modules/", "logs/", "*.mjs", "*.cjs"],
+  "plugins": ["typescript", "unicorn", "import", "oxc", "eslint", "node", "promise", "vitest"],
   "categories": {
     "correctness": "error"
   },
@@ -171,10 +155,7 @@
     "radix": "error",
     "require-await": "error",
     "symbol-description": "error",
-    "typescript/array-type": [
-      "error",
-      { "default": "array-simple", "readonly": "array-simple" }
-    ],
+    "typescript/array-type": ["error", { "default": "array-simple", "readonly": "array-simple" }],
     "typescript/await-thenable": "error",
     "typescript/ban-ts-comment": "error",
     "typescript/ban-types": "error",
@@ -267,7 +248,7 @@
     "unicorn/no-negated-condition": "error",
     "unicorn/no-new-array": "error",
     "unicorn/no-new-buffer": "error",
-    "unicorn/no-null": "error",
+    "unicorn/no-null": "off",
     "unicorn/no-object-as-default-parameter": "error",
     "unicorn/no-process-exit": "error",
     "unicorn/no-single-promise-in-promise-methods": "error",
@@ -347,7 +328,7 @@
   },
   "overrides": [
     {
-      "files": ["src/database/_migrations/*.ts", "src/database/_seeders/*.ts"],
+      "files": ["src/database/_typeorm/migrations/*.ts", "src/database/_typeorm/seeders/*.ts"],
       "rules": {
         "max-lines-per-function": "off",
         "max-lines": "off"

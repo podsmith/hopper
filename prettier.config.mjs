@@ -1,7 +1,7 @@
 // @ts-check
 /** @type {import("prettier").Config} */
 const config = {
-  printWidth: 80,
+  printWidth: 100,
   singleQuote: true,
   jsxSingleQuote: true,
   trailingComma: 'all',
@@ -12,22 +12,9 @@ const config = {
   endOfLine: 'lf',
   embeddedLanguageFormatting: 'auto',
   bracketSpacing: true,
-  plugins: [
-    'prettier-plugin-toml',
-    '@prettier/plugin-oxc',
-    '@ianvs/prettier-plugin-sort-imports',
-  ],
+  plugins: ['prettier-plugin-toml', '@prettier/plugin-oxc', '@ianvs/prettier-plugin-sort-imports'],
   importOrderParserPlugins: ['typescript', 'jsx', 'decorators-legacy'],
-  importOrder: [
-    '<BUILTIN_MODULES>',
-    '',
-    '<THIRD_PARTY_MODULES>',
-    '',
-    '@/.*',
-    '~/.*',
-    '^[.]',
-    '',
-  ],
+  importOrder: ['<BUILTIN_MODULES>', '', '<THIRD_PARTY_MODULES>', '', '@/.*', '~/.*', '^[.]', ''],
 };
 
 export default config;

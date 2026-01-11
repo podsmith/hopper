@@ -14,6 +14,7 @@
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "typescript.preferences.includePackageJsonAutoImports": "on",
   "editor.wordWrapColumn": 120,
+  "editor.wordWrap": "off",
   "editor.renderFinalNewline": "on",
   "editor.inlayHints.enabled": "on",
   "editor.trimAutoWhitespace": true,
