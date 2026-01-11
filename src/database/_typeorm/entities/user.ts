@@ -5,6 +5,10 @@ import { UserRole } from '@/database/_typeorm/entities/user-role';
 
 @Entity('users')
 @Index(['role'])
+@Index(['isRoot'], {
+  unique: true,
+  where: 'deleted_at is null and is_root = true',
+})
 export class User extends BaseUserEntity {
   @Column({ type: 'boolean', default: false })
   isRoot?: boolean;
