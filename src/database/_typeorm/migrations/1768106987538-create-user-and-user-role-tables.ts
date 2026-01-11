@@ -1,7 +1,7 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateUserAndUserRoleTables1768105015547 implements MigrationInterface {
-  name = 'CreateUserAndUserRoleTables1768105015547';
+export class CreateUserAndUserRoleTables1768106987538 implements MigrationInterface {
+  name = 'CreateUserAndUserRoleTables1768106987538';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
@@ -30,15 +30,25 @@ export class CreateUserAndUserRoleTables1768105015547 implements MigrationInterf
                 "last_name" character varying NOT NULL,
                 "email" citext NOT NULL,
                 "phone" citext NOT NULL,
+                "image_key" citext,
                 "is_root" boolean NOT NULL DEFAULT false,
                 "role_id" uuid NOT NULL,
                 CONSTRAINT "CHK_dca6d9e0a52779f5615e748f31" CHECK (is_valid_person_name(last_name)),
                 CONSTRAINT "CHK_38a0a0d7fabc6ab47e00f5d89b" CHECK (is_valid_person_name(first_name)),
                 CONSTRAINT "CHK_62d3b8b8f324c7a570e1f080fa" CHECK (is_valid_phone(phone)),
+                CONSTRAINT "CHK_3a544638a1fc6f89da9eaa5af2" CHECK (
+                    image_key is null
+                    or char_length(image_key) > 10
+                ),
                 CONSTRAINT "CHK_ee6c42bed2299238e73c72748b" CHECK (char_length(last_name) > 0),
                 CONSTRAINT "CHK_48a5070de79afeba733ff0c273" CHECK (char_length(first_name) > 0),
                 CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id")
             )
+        `);
+    await queryRunner.query(`
+            CREATE UNIQUE INDEX "IDX_ca75e7d14ec1d5cfb9d5140e16" ON "users" ("image_key")
+            WHERE deleted_at is null
+                and image_key is not null
         `);
     await queryRunner.query(`
             CREATE UNIQUE INDEX "IDX_6d2dce4f596bcf6daea0d2df46" ON "users" ("phone")
@@ -69,6 +79,9 @@ export class CreateUserAndUserRoleTables1768105015547 implements MigrationInterf
         `);
     await queryRunner.query(`
             DROP INDEX "public"."IDX_6d2dce4f596bcf6daea0d2df46"
+        `);
+    await queryRunner.query(`
+            DROP INDEX "public"."IDX_ca75e7d14ec1d5cfb9d5140e16"
         `);
     await queryRunner.query(`
             DROP TABLE "users"

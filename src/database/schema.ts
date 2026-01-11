@@ -26,6 +26,7 @@ export interface User {
   email: string;
   firstName: string;
   id: Generated<string>;
+  imageKey: string | null;
   isRoot: Generated<boolean>;
   lastName: string;
   phone: string;
