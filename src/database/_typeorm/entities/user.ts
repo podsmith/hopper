@@ -1,36 +1,13 @@
-import {
-  Check,
-  Column,
-  Entity,
-  Index,
-  ManyToOne,
-  type Relation,
-} from 'typeorm';
+import { Column, Entity, Index, ManyToOne, type Relation } from 'typeorm';
 
-import { BaseUuidEntity } from '@/database/_typeorm/entities/base';
+import { BaseUserEntity } from '@/database/_typeorm/entities/base';
 import { UserRole } from '@/database/_typeorm/entities/user-role';
 
 @Entity('users')
-@Check('char_length(first_name) > 0')
-@Check('char_length(last_name) > 0')
-@Check('is_valid_phone(phone)')
-@Check('is_valid_person_name(first_name)')
-@Check('is_valid_person_name(last_name)')
-@Index(['email'], { unique: true, where: 'deleted_at is not null' })
-@Index(['phone'], { unique: true, where: 'deleted_at is not null' })
 @Index(['role'])
-export class User extends BaseUuidEntity {
-  @Column({ type: 'varchar' })
-  firstName?: string;
-
-  @Column({ type: 'varchar' })
-  lastName?: string;
-
-  @Column({ type: 'citext' })
-  email?: string;
-
-  @Column({ type: 'citext' })
-  phone?: string;
+export class User extends BaseUserEntity {
+  @Column({ type: 'boolean', default: false })
+  isRoot?: boolean;
 
   @ManyToOne(() => UserRole, (role) => role.user, {
     nullable: false,

@@ -13,7 +13,7 @@ import { User } from '@/database/_typeorm/entities/user';
 @Entity('user_roles')
 @Check('char_length(name) > 0')
 @Check(String.raw`name ~ '^[a-zA-Z][a-zA-Z0-9_)(\\s-]*$'`)
-@Index(['name'], { unique: true, where: 'deleted_at is not null' })
+@Index(['name'], { unique: true, where: 'deleted_at is null' })
 export class UserRole extends BaseUuidEntity {
   @Column({ type: 'varchar' })
   name?: string;

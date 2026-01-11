@@ -1,7 +1,7 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateUserAndUserRoleTables1768062620323 implements MigrationInterface {
-  name = 'CreateUserAndUserRoleTables1768062620323';
+export class CreateUserAndUserRoleTables1768105015547 implements MigrationInterface {
+  name = 'CreateUserAndUserRoleTables1768105015547';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
@@ -17,8 +17,8 @@ export class CreateUserAndUserRoleTables1768062620323 implements MigrationInterf
             )
         `);
     await queryRunner.query(`
-            CREATE UNIQUE INDEX "IDX_6b4d2aaea1805c54602e7c9269" ON "user_roles" ("name")
-            WHERE deleted_at is not null
+            CREATE UNIQUE INDEX "IDX_4b7c50b441464046c7ce59b84d" ON "user_roles" ("name")
+            WHERE deleted_at is null
         `);
     await queryRunner.query(`
             CREATE TABLE "users" (
@@ -30,6 +30,7 @@ export class CreateUserAndUserRoleTables1768062620323 implements MigrationInterf
                 "last_name" character varying NOT NULL,
                 "email" citext NOT NULL,
                 "phone" citext NOT NULL,
+                "is_root" boolean NOT NULL DEFAULT false,
                 "role_id" uuid NOT NULL,
                 CONSTRAINT "CHK_dca6d9e0a52779f5615e748f31" CHECK (is_valid_person_name(last_name)),
                 CONSTRAINT "CHK_38a0a0d7fabc6ab47e00f5d89b" CHECK (is_valid_person_name(first_name)),
@@ -40,15 +41,15 @@ export class CreateUserAndUserRoleTables1768062620323 implements MigrationInterf
             )
         `);
     await queryRunner.query(`
+            CREATE UNIQUE INDEX "IDX_6d2dce4f596bcf6daea0d2df46" ON "users" ("phone")
+            WHERE deleted_at is null
+        `);
+    await queryRunner.query(`
+            CREATE UNIQUE INDEX "IDX_10cea423e3e4924f7a3c24b7ba" ON "users" ("email")
+            WHERE deleted_at is null
+        `);
+    await queryRunner.query(`
             CREATE INDEX "IDX_a2cecd1a3531c0b041e29ba46e" ON "users" ("role_id")
-        `);
-    await queryRunner.query(`
-            CREATE UNIQUE INDEX "IDX_1f536ec5990f7695570a12f373" ON "users" ("phone")
-            WHERE deleted_at is not null
-        `);
-    await queryRunner.query(`
-            CREATE UNIQUE INDEX "IDX_bffe012c3638e65ec2f9dddde7" ON "users" ("email")
-            WHERE deleted_at is not null
         `);
     await queryRunner.query(`
             ALTER TABLE "users"
@@ -61,19 +62,19 @@ export class CreateUserAndUserRoleTables1768062620323 implements MigrationInterf
             ALTER TABLE "users" DROP CONSTRAINT "FK_a2cecd1a3531c0b041e29ba46e1"
         `);
     await queryRunner.query(`
-            DROP INDEX "public"."IDX_bffe012c3638e65ec2f9dddde7"
-        `);
-    await queryRunner.query(`
-            DROP INDEX "public"."IDX_1f536ec5990f7695570a12f373"
-        `);
-    await queryRunner.query(`
             DROP INDEX "public"."IDX_a2cecd1a3531c0b041e29ba46e"
+        `);
+    await queryRunner.query(`
+            DROP INDEX "public"."IDX_10cea423e3e4924f7a3c24b7ba"
+        `);
+    await queryRunner.query(`
+            DROP INDEX "public"."IDX_6d2dce4f596bcf6daea0d2df46"
         `);
     await queryRunner.query(`
             DROP TABLE "users"
         `);
     await queryRunner.query(`
-            DROP INDEX "public"."IDX_6b4d2aaea1805c54602e7c9269"
+            DROP INDEX "public"."IDX_4b7c50b441464046c7ce59b84d"
         `);
     await queryRunner.query(`
             DROP TABLE "user_roles"
