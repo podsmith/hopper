@@ -26,10 +26,7 @@ if (result.error) {
 
 const env = result.data;
 
-class SnakeCaseNamingStrategy
-  extends DefaultNamingStrategy
-  implements NamingStrategyInterface
-{
+class SnakeCaseNamingStrategy extends DefaultNamingStrategy implements NamingStrategyInterface {
   tableName(targetName: string, userSpecifiedName: string | undefined) {
     if (userSpecifiedName) {
       return userSpecifiedName;
@@ -38,15 +35,8 @@ class SnakeCaseNamingStrategy
     return snakeCase(targetName);
   }
 
-  columnName(
-    propertyName: string,
-    customName: string | undefined,
-    embeddedPrefixes: string[],
-  ) {
-    return (
-      snakeCase([...embeddedPrefixes, ''].join('_')) +
-      (customName ?? snakeCase(propertyName))
-    );
+  columnName(propertyName: string, customName: string | undefined, embeddedPrefixes: string[]) {
+    return snakeCase([...embeddedPrefixes, ''].join('_')) + (customName ?? snakeCase(propertyName));
   }
 
   relationName(propertyName: string) {
@@ -57,21 +47,13 @@ class SnakeCaseNamingStrategy
     return snakeCase(`${relationName}_${referencedColumnName}`);
   }
 
-  joinTableName(
-    firstTableName: string,
-    secondTableName: string,
-    firstPropertyName: string,
-  ) {
+  joinTableName(firstTableName: string, secondTableName: string, firstPropertyName: string) {
     return snakeCase(
       `${firstTableName}_${firstPropertyName.replaceAll('.', '_')}_${secondTableName}`,
     );
   }
 
-  joinTableColumnName(
-    tableName: string,
-    propertyName: string,
-    columnName?: string,
-  ) {
+  joinTableColumnName(tableName: string, propertyName: string, columnName?: string) {
     return snakeCase(`${tableName}_${columnName ?? propertyName}`);
   }
 
@@ -113,18 +95,14 @@ const typeOrmDefaultOptions: DataSourceOptions = {
 
 export const typeOrmMigrationOptions: DataSourceOptions = {
   ...typeOrmDefaultOptions,
-  migrations: [
-    path.join(import.meta.dirname, '../database/_typeorm/migrations/*.{js,ts}'),
-  ],
+  migrations: [path.join(import.meta.dirname, '../database/_typeorm/migrations/*.{js,ts}')],
   migrationsTableName: 'typeorm_migration_references',
   metadataTableName: 'typeorm_migration_meta',
 };
 
 export const typeOrmSeederOptions: DataSourceOptions = {
   ...typeOrmDefaultOptions,
-  migrations: [
-    path.join(import.meta.dirname, '../database/_typeorm/seeders/*.{js,ts}'),
-  ],
+  migrations: [path.join(import.meta.dirname, '../database/_typeorm/seeders/*.{js,ts}')],
   migrationsTableName: 'typeorm_seeder_references',
   metadataTableName: 'typeorm_seeder_meta',
   migrationsTransactionMode: 'each',

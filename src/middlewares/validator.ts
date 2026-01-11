@@ -109,10 +109,7 @@ export const validator = <
 
       if (rs) {
         try {
-          data = await z.parseAsync(
-            z.union([rs, BaseErrorResponseSchema]),
-            data,
-          );
+          data = await z.parseAsync(z.union([rs, BaseErrorResponseSchema]), data);
         } catch (error) {
           logger.error('failed to validate the response data', { error });
 

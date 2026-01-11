@@ -4,6 +4,7 @@ TYPEORM_MIGRATION_CONFIG_FILE:=src/database/_typeorm/data-source.ts
 TYPEORM_SEED_CONFIG_FILE:=src/database/_typeorm/seed-data-source.ts
 TYPEORM_MIGRATION_DIR:=src/database/_typeorm/migrations
 TYPEORM_SEED_DIR:=src/database/_typeorm/seeders
+KYSELY_SCHEMA_FILE:=src/database/schema.ts
 
 # generate a new migration
 migration\:generate:
@@ -30,10 +31,14 @@ migration\:create:
 # apply all pending migrations
 migration\:apply:
 	@$(TYPEORM) migration:run -d $(TYPEORM_MIGRATION_CONFIG_FILE)
+	@make db:types:generate
+	@bunx prettier --log-level=error -w $(KYSELY_SCHEMA_FILE)
 
 # revert the last migration
 migration\:revert:
 	@$(TYPEORM) migration:revert -d $(TYPEORM_MIGRATION_CONFIG_FILE)
+	@make db:types:generate
+	@bunx prettier --log-level=error -w $(KYSELY_SCHEMA_FILE)
 
 # create database seed
 seeder\:create:

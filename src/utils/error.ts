@@ -30,10 +30,7 @@ type ZodErrorDetail =
   | {
       inline: false;
       source?: 'request_body' | 'request_param' | 'request_query';
-      issues: Record<
-        string,
-        string | number | boolean | string[] | number[] | boolean[]
-      >;
+      issues: Record<string, string | number | boolean | string[] | number[] | boolean[]>;
     };
 
 type CustomErrorResponse = {
@@ -47,11 +44,7 @@ export class CustomError extends Error {
   status: HttpStatus;
   details: CustomErrorDetail;
 
-  constructor(
-    message: string,
-    status: HttpStatus,
-    details?: CustomErrorDetail,
-  ) {
+  constructor(message: string, status: HttpStatus, details?: CustomErrorDetail) {
     super(message);
     this.status = status;
     this.details = details;

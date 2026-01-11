@@ -53,13 +53,10 @@ export const app = new Hono()
   .notFound((c) => {
     const { path, method } = c.req;
 
-    throw new NotFoundError(
-      ErrorMessage.Fields.KeyNotFound('requested resource'),
-      {
-        path,
-        method,
-      },
-    );
+    throw new NotFoundError(ErrorMessage.Fields.KeyNotFound('requested resource'), {
+      path,
+      method,
+    });
   })
   .onError((error, c) => {
     const { status, details, stack, message } = formatErrorResponse(error);
@@ -74,9 +71,7 @@ export const app = new Hono()
       {
         message,
         details,
-        stack: env.SERVER_ERROR_DEBUG
-          ? stack
-          : /* istanbul ignore next -- @preserve */ undefined,
+        stack: env.SERVER_ERROR_DEBUG ? stack : /* istanbul ignore next -- @preserve */ undefined,
       },
       // oxlint-disable-next-line no-unsafe-type-assertion
       status as ContentfulStatusCode,

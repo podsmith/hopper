@@ -11,10 +11,7 @@ export const SerialIdFieldSchema = (label = 'ID') =>
     .trim()
     .regex(
       RegEx.SerialId,
-      ErrorMessage.Fields.KeyMustBeValidT(
-        label,
-        'positive integer with no leading zero',
-      ),
+      ErrorMessage.Fields.KeyMustBeValidT(label, 'positive integer with no leading zero'),
     )
     .min(1)
     // Limit to the max based on PostgreSQL DB (https://www.postgresql.org/docs/current/datatype-numeric.html)
@@ -32,10 +29,7 @@ export const TimestampFieldSchema = (label = 'Timestamp') =>
     .union([
       z.coerce
         .string(ErrorMessage.Fields.KeyMustBeValidT(label, 'timestamp'))
-        .regex(
-          RegEx.UtcTimestamp,
-          ErrorMessage.Fields.KeyMustBeValidT(label, 'timestamp'),
-        ),
+        .regex(RegEx.UtcTimestamp, ErrorMessage.Fields.KeyMustBeValidT(label, 'timestamp')),
       z.coerce.date(ErrorMessage.Fields.KeyMustBeValidT(label, 'timestamp')),
     ])
     .transform((v) => datetime(v, { utc: true }).toDate());
@@ -46,14 +40,8 @@ export const PasswordFieldSchema = (label = 'Password') =>
     .trim()
     .min(10, ErrorMessage.Fields.KeyMustHaveMinLength(label, 10))
     .max(30, ErrorMessage.Fields.KeyMustHaveMaxLength(label, 30))
-    .refine(
-      (v) => /[a-z]/.test(v),
-      `${label} must have at least 1 lowercase letter`,
-    )
-    .refine(
-      (v) => /[A-Z]/.test(v),
-      `${label} must have at least 1 uppercase letter`,
-    )
+    .refine((v) => /[a-z]/.test(v), `${label} must have at least 1 lowercase letter`)
+    .refine((v) => /[A-Z]/.test(v), `${label} must have at least 1 uppercase letter`)
     .refine((v) => /\d/.test(v), `${label} must have at least 1 digit`)
     .refine(
       (v) => /[*=\-;:<>^!@#$%&()[\]]/.test(v),
@@ -68,15 +56,9 @@ export const EmailFieldSchema = (label = 'Email address') =>
   });
 
 export const ListSortOderFieldSchema = (label = 'Sort order') =>
-  z.enum(
-    ListSortOrder,
-    ErrorMessage.Fields.KeyMustBeIncludedInValues(label, ListSortOrder),
-  );
+  z.enum(ListSortOrder, ErrorMessage.Fields.KeyMustBeIncludedInValues(label, ListSortOrder));
 
-export const ListSortKeyFieldSchema = (
-  values: Parameters<typeof z.enum>[0],
-  label = 'Sort key',
-) =>
+export const ListSortKeyFieldSchema = (values: Parameters<typeof z.enum>[0], label = 'Sort key') =>
   z.enum(values, ErrorMessage.Fields.KeyMustBeIncludedInValues(label, values));
 
 export const PhoneNumberFieldSchema = (label = 'Phone number') =>
@@ -86,26 +68,17 @@ export const PhoneNumberFieldSchema = (label = 'Phone number') =>
     .max(16, ErrorMessage.Fields.KeyMustHaveMaxLength(label, 16))
     .regex(
       RegEx.PhoneNumberE164,
-      ErrorMessage.Fields.KeyMustBeValidT(
-        label,
-        'phone number with E.164 format',
-      ),
+      ErrorMessage.Fields.KeyMustBeValidT(label, 'phone number with E.164 format'),
     );
 
 export const PersonNameFieldSchema = (label = 'Name') =>
   z
     .string(ErrorMessage.Fields.KeyMustBeValidT(label, 'string'))
     .trim()
-    .regex(
-      RegEx.PersonName,
-      ErrorMessage.Fields.KeyMustBeValidT(label, 'string'),
-    );
+    .regex(RegEx.PersonName, ErrorMessage.Fields.KeyMustBeValidT(label, 'string'));
 
 export const UtilityNameFieldSchema = (label = 'Name') =>
   z
     .string(ErrorMessage.Fields.KeyMustBeValidT(label, 'string'))
     .trim()
-    .regex(
-      RegEx.UtilityName,
-      ErrorMessage.Fields.KeyMustBeValidT(label, 'string'),
-    );
+    .regex(RegEx.UtilityName, ErrorMessage.Fields.KeyMustBeValidT(label, 'string'));

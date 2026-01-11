@@ -33,9 +33,7 @@ const jsonLogFormat = format.combine(
 const consoleLogTransport = new transports.Console({
   format: jsonLogFormat,
   level: 'debug',
-  silent: StringBooleanFieldSchema('Log silence flag').parse(
-    process.env.LOG_SILENCE,
-  ),
+  silent: StringBooleanFieldSchema('Log silence flag').parse(process.env.LOG_SILENCE),
 });
 
 const logger = createLogger({

@@ -1,18 +1,12 @@
 import dotenv from 'dotenv-flow';
 import * as z from 'zod';
 
-import {
-  EmailFieldSchema,
-  StringBooleanFieldSchema,
-} from '@/validators/common/field';
+import { EmailFieldSchema, StringBooleanFieldSchema } from '@/validators/common/field';
 
 dotenv.config({ purge_dotenv: true, silent: true });
 
 export const DatabaseEnvironmentSchema = z.object({
-  DB_URL: z
-    .url({ error: 'PostgreSQL connection string is invalid' })
-    .trim()
-    .nonempty(),
+  DB_URL: z.url({ error: 'PostgreSQL connection string is invalid' }).trim().nonempty(),
   DB_POOL_SIZE: z.coerce.number().int().min(1).default(20),
   DB_CONN_TIMEOUT_MS: z.coerce.number().int().min(1).default(10_000),
   DB_SSL_CERTIFICATE: z
@@ -20,9 +14,7 @@ export const DatabaseEnvironmentSchema = z.object({
     .optional()
     .nullable()
     .transform((v) => v?.split(String.raw`\n`).join('\n')),
-  DB_LOGS_ENABLED: StringBooleanFieldSchema(
-    'Database query logging flag',
-  ).default(false),
+  DB_LOGS_ENABLED: StringBooleanFieldSchema('Database query logging flag').default(false),
   DB_LOGS_PARAMETER_ENABLED: StringBooleanFieldSchema(
     'Database query parameter logging flag',
   ).default(false),
@@ -34,8 +26,7 @@ export const LoggingEnvironmentSchema = z.object({
 
 export const ServerEnvironmentSchema = z.object({
   SERVER_PORT: z.coerce.number().int().min(8000).max(8999).default(8000),
-  SERVER_TIMING_DEBUG:
-    StringBooleanFieldSchema('Server timing flag').default(false),
+  SERVER_TIMING_DEBUG: StringBooleanFieldSchema('Server timing flag').default(false),
   SERVER_TIMEOUT_MS: z.coerce.number().int().default(5000),
   SERVER_MAX_BODY_SIZE_KB: z.coerce
     .number()
@@ -48,8 +39,7 @@ export const ServerEnvironmentSchema = z.object({
     .optional()
     .default('*.example.com')
     .transform((v) => v.split(';').map((r) => r.trim())),
-  SERVER_ERROR_DEBUG:
-    StringBooleanFieldSchema('Server error flag').default(false),
+  SERVER_ERROR_DEBUG: StringBooleanFieldSchema('Server error flag').default(false),
 });
 
 export const RedisEnvironmentSchema = z.object({

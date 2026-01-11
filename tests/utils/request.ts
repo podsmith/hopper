@@ -13,10 +13,7 @@ type ExtractDynamicPathParams<
     ? { [K in Param]: TVal }
     : Record<never, never>;
 
-type RouteInterpolationOptions<
-  TRoute extends string,
-  TParam = ExtractDynamicPathParams<TRoute>,
-> = {
+type RouteInterpolationOptions<TRoute extends string, TParam = ExtractDynamicPathParams<TRoute>> = {
   route: TRoute;
 } & (keyof TParam extends never ? { params?: never } : { params: TParam });
 

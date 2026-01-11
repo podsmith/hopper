@@ -1,11 +1,4 @@
-import {
-  Check,
-  Column,
-  Entity,
-  Index,
-  OneToMany,
-  type Relation,
-} from 'typeorm';
+import { Check, Column, Entity, Index, OneToMany, type Relation } from 'typeorm';
 
 import { BaseUuidEntity } from '@/database/_typeorm/entities/base';
 import { User } from '@/database/_typeorm/entities/user';
